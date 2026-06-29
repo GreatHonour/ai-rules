@@ -29,6 +29,7 @@
 | [typescript.md](.agents/rules/typescript.md)     | TypeScript / 类型定义 / 类型安全 / 函数设计         |
 | [vue3.md](.agents/rules/vue3.md)                 | Vue 3 / Composition API / Props / Emits / Slots     |
 | [vue2.md](.agents/rules/vue2.md)                 | Vue 2 / Options API / Props / Emits / Slots         |
+| [uniapp.md](.agents/rules/uniapp.md)             | uni-app 相关规则        |
 
 ---
 
