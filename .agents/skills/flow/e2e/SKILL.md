@@ -67,4 +67,4 @@ metadata:
 
 按 Adapter 指引重置 viewport、关闭页面并删除临时脚本或截图。最后检查 `git status`；若工具异步写回临时文件，继续清理并复查，直到没有本次 E2E 产生的残留。
 
-报告和清理完成后，所有验证对象均已完成则调用 `archive/SKILL.md`；否则停止并保留未完成状态。
+报告和清理完成后，所有验证对象均已完成则调用 `archive/SKILL.md`；否则停止并保留未完成状态，告知用户修复后重新调用 `e2e/SKILL.md` 重跑失败场景，或确认跳过后调用 `archive/SKILL.md`。

@@ -27,7 +27,7 @@ metadata:
 4. 按用户决定处理问题，并在 `review.md` 标记：`已修复`、`撤回（原因）`、`用户跳过` 或 `延后（去向）`。
 5. 所有问题都有明确状态且修复验证通过后进入下游；没有问题则直接进入下游。
 
-`review.md` 是过程清单，由 `archive/SKILL.md` 提取净结论后删除。
+`review.md` 是过程清单，由 `archive/SKILL.md` 直接删除。
 
 ## 输出格式
 
@@ -72,5 +72,7 @@ metadata:
 
 ## 下游
 
-- `task.md` 存在未完成的“集成验证”任务 → 先提示用户是否调用 `e2e/SKILL.md`
-- 不存在“集成验证”任务 → 调用 `archive/SKILL.md`
+若从 `implement` 内部调用，由 `implement` 控制后续流程，review 完成后不主动路由。独立调用时：
+
+- `task.md` 存在未完成的”集成验证”任务 → 先提示用户是否调用 `e2e/SKILL.md`
+- 不存在”集成验证”任务 → 调用 `archive/SKILL.md`

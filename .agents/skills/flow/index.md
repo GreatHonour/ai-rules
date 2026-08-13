@@ -4,7 +4,7 @@
 ### 新功能开发
 
 ```
-brainstorm → plans → implement → review → e2e → archive（提炼结论 → 清理过程报告 → git 提交）
+brainstorm → plans → implement（含 review）→ e2e → archive（清理过程文件 → git 提交）
 ```
 
 brainstorm 的阻塞约束、方案与边界确认，plans 完成后的 `/grill-with-docs` 或 `implement` 路由选择，以及 review 的修复范围确认属于用户决策点。其余阶段完成后直接调用下游 skill；用户明确要求只执行当前阶段时例外。
@@ -45,12 +45,12 @@ Bugfix 根据改动范围和现有验证给出下游建议，由用户选择 E2E
 ```
 .docs/
   [文件名]/
-    log.md                      ← 功能演进史（能力/关键逻辑/结构决策/Review 与 E2E 结论/遗留）
+    log.md                      ← 功能演进史（能力/关键逻辑/结构决策/遗留）
     [YYYY-MM-DD]/               ← 按日期分组
       design.md                 ← 设计文档（长期保留；允许在本迭代内同步实现级修正）
       task.md                   ← 任务列表（长期保留；允许在本迭代内同步实现级修正）
-      review.md                 ← 审查过程文件（archive 阶段提炼后删除）
-      e2e-report.md             ← E2E 过程文件（archive 阶段提炼后删除）
+      review.md                 ← 审查过程文件（archive 阶段直接删除）
+      e2e-report.md             ← E2E 过程文件（archive 阶段直接删除）
       [问题简述]-fix.md         ← bug 修复记录（长期保留：根因/复现/方案，log.md 链回）
   retro.md                      ← 代码、流程和工具经验候选，由用户自行处理
 ```
@@ -64,7 +64,7 @@ Bugfix 根据改动范围和现有验证给出下游建议，由用户选择 E2E
 - `*-fix.md` 已完成验证且用户选择直接归档，或 E2E 已通过但 `log.md` 无本次记录 → 从 archive 继续
 - `design.md` 存在但无 `task.md` → 从 plans Phase 2 继续
 - 普通功能任务中有 `[ ]` → 从 implement 继续
-- 普通功能任务全部 `[x]` 但无 `review.md` → 从 review 继续
+- 普通功能任务全部 `[x]` 但无 `review.md` → 直接调用 `review/SKILL.md`
 - `review.md` 存在且集成验证任务中有 `[ ]` → 从 e2e 继续
 - 无集成验证任务或集成验证任务全部 `[x]`，但 `log.md` 无本次记录 → 从 archive 继续
 - `log.md` 已有本次记录，但 `review.md`、`e2e-report.md` 尚未清理或本次改动尚未提交 → 从 archive 继续
