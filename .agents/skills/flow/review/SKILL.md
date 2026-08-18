@@ -1,9 +1,9 @@
 ---
 name: review
-description: 审查本次实现的正确性和代码质量，将问题写入 review.md，经用户确认后修复并验证。Use whenever implementation is complete and its changes need review before E2E.
+description: "审查本次实现的正确性和代码质量，输出分级问题清单到 review.md。前置条件：必须有已完成的代码改动。如果没有改动或任务未完成 - 拒绝执行。经用户确认后修复问题并验证。Use after implementation is complete and changes need review before E2E. DO NOT use without code changes."
 metadata:
   author: icc-grow
-  version: "2.0.0"
+  version: "2.1.0"
 ---
 
 # 代码审查 (Review)
@@ -13,11 +13,11 @@ metadata:
 ## 规则
 
 1. **确定审查范围**：根据 `task.md` 和 `git diff` 确定审查范围；对比基准为任务开始前的提交。无法确认归属的修改不审查、不修改。
-2. **读取预期**：读取 `design.md`、`AGENTS.md` 和本次改动适用的项目规则，不加载无关规则。遵循[上下文获取策略](../index.md#上下文获取策略所有-skill-通用)，以功能文档为预期依据。
+2. **读取预期**：读取 `design.md`、`AGENTS.md` 和本次改动适用的项目规则。
 3. **检查行为**：检查行为是否符合设计和任务边界，以及测试是否覆盖关键行为和回归风险。
 4. **检查质量**：检查结构、命名、可维护性、异常、安全、性能、兼容性和过度设计，只报告有明确证据的问题。
 5. **等待确认**：先列出全部问题，再等待用户决定修复、跳过或延后；确认前不修改代码。
-6. **修复验证**：只修用户确认的问题，不顺手重构。修复后重新运行相关测试；全部修复完成后运行 lint、typecheck 等项目检查。
+6. **修复验证**：只修用户确认的问题，不做范围外的重构。修复后重新运行相关测试；全部修复完成后运行 lint、typecheck 等项目检查。
 
 ## 执行流程
 

@@ -1,9 +1,9 @@
 ---
 name: e2e
-description: 在真实浏览器中验证 task.md 的集成验证任务或 fix.md 的验证场景，记录证据、处理失败并更新验证状态。Use after review or bugfix when complete user flows require browser verification.
+description: "在真实浏览器中验证集成场景，记录证据、处理失败并更新验证状态。前置条件：必须存在 task.md 的集成验证任务或 fix.md 的验证场景。如果没有验证任务 - 询问用户是否需要。适用于：跨组件交互、完整用户流程、浏览器特定行为。Use after review or bugfix when complete user flows require browser verification. DO NOT use without verification tasks."
 metadata:
   author: icc-grow
-  version: "2.2.0"
+  version: "2.3.0"
 ---
 
 # E2E 验证
@@ -43,17 +43,17 @@ metadata:
 
 1. 从 Demo 或任务指定的用户入口开始；仅场景标注 `[公开 API]` 时验证服务语义。
 2. 交互前读取最新页面状态并确认目标唯一，离屏元素先滚动到可见区域。
-3. 交互后等待明确的稳定状态，再以可见文本、DOM、URL 或控制台日志记录证据；命令成功不能单独作为证据。
+3. 交互后等待页面状态不再变化（DOM 无更新且网络请求完成），再以可见文本、DOM、URL 或控制台日志记录证据；命令成功不能单独作为证据。
 4. 移动端场景设置明确 viewport，并读取 `innerWidth`、`innerHeight` 确认生效。
 5. 检查页面控制台 error；出现错误时记录 URL、页面状态和日志。
 
 ## 失败、修复与复测
 
-- 失败后先定位原因；能够可靠修复时可就地修改代码。
+- 失败后先定位原因；能够确定失败原因且修复方案确定时可就地修改代码。
 - 修改后运行受影响测试和项目适用检查，再重跑受影响场景。
 - 修改可能影响已通过场景时，同时重跑这些场景。
 - 在报告中记录 E2E 阶段的全部代码修改。
-- 无法可靠推进或需要用户判断时，停止对应场景并标记「需人工介入」，不做无依据重试。
+- 无法确定失败原因或需要用户判断时，停止对应场景并标记「需人工介入」，不做无依据重试。
 
 ## 结果与流转
 

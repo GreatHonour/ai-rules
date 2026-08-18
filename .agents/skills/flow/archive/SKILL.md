@@ -1,9 +1,9 @@
 ---
 name: archive
-description: 在功能实现、审查及所需 E2E 完成后归档本次迭代，更新功能日志、清理过程文件，并将有证据的经验候选记录到 retro.md。Use at the end of a feature or bugfix workflow.
+description: "在功能实现或 bugfix 完成且通过验证后归档本次迭代。前置条件：所有任务已完成、review 已通过、必要的 E2E 已完成。更新功能日志到 log.md、清理过程文件（review.md）、将有证据的经验候选记录到 retro.md、执行 Git 提交。Use at the end of feature or bugfix workflow. DO NOT use if tasks incomplete or review failed."
 metadata:
   author: icc-grow
-  version: "2.0.0"
+  version: "2.1.0"
 ---
 
 # 流程归档
@@ -37,7 +37,7 @@ metadata:
 
 ## 记录经验候选
 
-读取 `.docs/retro.md`，仅在本次迭代有明确证据时按日期倒序追加；没有可靠经验时不写占位内容。
+读取 `.docs/retro.md`，仅在本次迭代有可追溯证据（错误日志、测试结果、产物章节）时按日期倒序追加；没有实施证据时不写占位内容。
 
 ```markdown
 ## YYYY-MM-DD [文件名]
