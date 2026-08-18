@@ -10,7 +10,7 @@
       design.md                     ← 设计文档（plans Phase 1；允许本迭代内同步实现级修正）
       task.md                       ← 任务拆分（plans Phase 2；允许本迭代内同步实现级修正）
       review.md                     ← 审查过程草稿（archive 阶段删除）
-      e2e-report.md                 ← E2E 验证报告（archive 阶段删除）
+      e2e-report.md                 ← E2E 验证报告（archive 保留）
       [问题简述]-fix.md             ← bug 修复记录（长期保留：根因/复现/方案，log.md 链回）
   retro.md                          ← 代码、流程和工具经验候选，由用户自行处理
 ```
