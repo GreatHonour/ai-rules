@@ -58,16 +58,10 @@ Bugfix 根据改动范围和现有验证给出下游建议，由用户选择 E2E
 
 | 用户意图 | 触发 Skill |
 |----------|-----------|
-| Bug、错误、小型明确变更 | bugfix |
-| 新功能、想法、需求探索 | brainstorm |
-| 技术设计与任务拆解 | plans |
-| 按任务列表实现 | implement |
-| 代码审查 | review |
-| 集成验证 | e2e |
-| 流程归档与提交 | archive |
-
-具体触发场景判断由各 skill 的 `description` 字段定义。
-
+| "我想做一个新功能 / 我有个想法" | brainstorm |
+| "我发现 bug / 这个功能坏了 / 新增一个已明确的小逻辑" | bugfix |
+| "帮我拆任务 / 出设计文档"（已有明确需求） | plans |
+| "继续实现 / 开始写代码" | implement |
 
 ## Skill 说明
 
@@ -78,9 +72,23 @@ Bugfix 根据改动范围和现有验证给出下游建议，由用户选择 E2E
 | implement | 按 task.md 逐一 TDD 实现 | 代码 + 测试 |
 | review | 审查代码质量，输出分级问题清单 | `review.md`（过程文件） |
 | e2e | 端到端验证集成场景 | `e2e-report.md`（过程文件） |
-| archive | 提炼迭代事实和经验候选，清理已有过程文件并提交本次改动 | 更新 `log.md` 和可选的 `.docs/retro.md`；仅删除已存在的 `review.md`，不创建它；完成 Git 提交 |
+| archive | 提炼迭代事实和经验候选，清理过程文件并提交本次改动 | 更新 `log.md` 和可选的 `.docs/retro.md`；删除 `review.md`；完成 Git 提交 |
 | bugfix | 修复缺陷或实现明确的小型变更，验证后由用户选择下游 | `[问题简述]-fix.md` + 代码 + 测试或适用检查 |
 
+## 产物目录结构
+
+```
+.docs/
+  [文件名]/
+    log.md                      ← 功能演进史（能力/关键逻辑/结构决策/遗留）
+    [YYYY-MM-DD]/               ← 按日期分组
+      design.md                 ← 设计文档（长期保留；允许在本迭代内同步实现级修正）
+      task.md                   ← 任务列表（长期保留；允许在本迭代内同步实现级修正）
+      review.md                 ← 审查过程文件（archive 阶段直接删除）
+      e2e-report.md             ← E2E 过程文件（archive 保留）
+      [问题简述]-fix.md         ← bug 修复记录（长期保留：根因/复现/方案，log.md 链回）
+  retro.md                      ← 代码、流程和工具经验候选，由用户自行处理
+```
 
 ## 断点续跑
 

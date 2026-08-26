@@ -1,9 +1,9 @@
 ---
 name: archive
-description: "在功能实现或 bugfix 完成且通过验证后归档本次迭代。前置条件：所有任务已完成、review 已通过或按流程豁免、必要的 E2E 已完成。更新功能日志到 log.md、清理已有过程文件（review.md）、将有证据的经验候选记录到 retro.md、执行 Git 提交。Use at the end of feature or bugfix workflow. DO NOT use if tasks incomplete or review failed."
+description: 在功能实现、审查及所需 E2E 完成后归档本次迭代，更新功能日志、清理过程文件，并将有证据的经验候选记录到 retro.md。Use at the end of a feature or bugfix workflow.
 metadata:
   author: icc-grow
-  version: "2.1.0"
+  version: "2.0.0"
 ---
 
 # 流程归档
@@ -15,17 +15,12 @@ metadata:
 1. 只记录已经实现或验证的事实，不补写未完成的想法。
 2. 同一日期目录内，可将 review、E2E 或 bugfix 产生的实现级修正同步回 `design.md` 和 `task.md`；历史日期目录不得改写。
 3. 核心方案发生变化时，写入新日期目录，不覆盖原设计。
-4. `design.md`、`task.md`、`e2e-report.md` 和 `*-fix.md` 长期保留；`review.md` 是 review 阶段的过程文件，若已存在则在归档时清理。
+4. `design.md`、`task.md`、`e2e-report.md` 和 `*-fix.md` 长期保留；`review.md`  是过程文件，执行阶段清理。
 5. 真机或外部验证项不写入 `task.md`，但必须在归档摘要中说明是否阻塞发布。
-
-### review.md 边界
-
-- `review.md` 只能由 `review/SKILL.md` 创建；archive 不调用 review，也不创建 review.md 或空白占位文件。
-- bugfix 选择直接归档，或流程明确豁免 review 时，记录豁免依据并继续归档，不得为了满足路径结构补建 review.md。
 
 ## 更新 log.md
 
-唯一允许路径：`.docs/[文件名]/log.md`（功能目录根部）。禁止在 `.docs/[文件名]/[YYYY-MM-DD]/` 创建或更新 `log.md`；日期目录只存放本次迭代产物。按日期倒序追加，只记录功能变化、关键边界、结构决策和遗留事项，不写阶段流水账，也不复述其他产物。
+路径：`.docs/[文件名]/log.md`。按日期倒序追加，只记录功能变化、关键边界、结构决策和遗留事项，不写阶段流水账，也不复述其他产物。
 
 ```markdown
 ## 功能：[功能名]
@@ -42,7 +37,7 @@ metadata:
 
 ## 记录经验候选
 
-读取 `.docs/retro.md`，仅在本次迭代有可追溯证据（错误日志、测试结果、产物章节）时按日期倒序追加；没有实施证据时不写占位内容。
+读取 `.docs/retro.md`，仅在本次迭代有明确证据时按日期倒序追加；没有可靠经验时不写占位内容。
 
 ```markdown
 ## YYYY-MM-DD [文件名]
@@ -60,9 +55,9 @@ metadata:
 
 ## 执行
 
-1. 读取本次迭代产物，确认普通任务与所需集成验证均已完成；确认 review 已通过，或记录 review 豁免依据；若 E2E 被豁免，也记录豁免依据。缺少 review.md 且存在有效豁免时不得创建该文件。
+1. 读取本次迭代产物，确认普通任务与所需集成验证均已完成；若 E2E 被豁免，记录豁免依据。
 2. 将本迭代已经发生的实现级修正同步回 `design.md`、`task.md`。
-3. 更新 `.docs/[文件名]/log.md`（不存在则在功能目录根部新建）；仅当 `review.md` 已存在时删除它，不得创建或补写 `review.md`。若日期目录中已有误放的 `log.md`，先合并其有效内容到根部日志，再删除误放文件。
+3. 更新 `log.md`（不存在则新建）；删除 `review.md`（若存在）。
 4. 有明确经验候选时更新 `.docs/retro.md`。
 5. 输出归档摘要，包括保留产物、任务状态、E2E 状态、遗留项、经验候选和发布状态。
 

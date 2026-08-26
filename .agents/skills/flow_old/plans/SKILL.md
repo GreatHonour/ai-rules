@@ -1,15 +1,14 @@
 ---
 name: plans
-description: "用于业务决策已完成且需要技术设计 + 任务拆解时。前置条件：范围已定义、规则已确认、边界已设定。将决策摘要或完整需求转换为 design.md 和 task.md。如果决策不完整 - 先回到 brainstorm。Use when business decisions are COMPLETE and you need technical design + task breakdown. Converts requirements into design.md and task.md. DO NOT use if decisions incomplete - return to brainstorm."
+description: 将已确认的决策摘要或完整需求转换为技术设计文档和直观任务列表，作为 implement 的唯一依据。Use whenever business decisions and boundaries are complete and the work needs technical design plus dependency-ordered tasks before implementation.
 metadata:
   author: icc-grow
-  version: "2.3.0"
+  version: "2.2.1"
 ---
 
 # 规划 (Plans)
 
 将 `brainstorm` 的决策摘要或用户直接提供的完整需求转换为同一目录下的 `design.md` 和 `task.md`。输出目录固定为项目根目录 `.docs/[文件名]/[YYYY-MM-DD]/`；`[文件名]` 是不含扩展名的小写英文目录标识，命名规范见 [structure.md](../templates/structure.md)。
-
 
 ## Phase 1：技术设计
 
@@ -88,7 +87,6 @@ metadata:
 | ToC 活动或交易 | 资格、时间、次数/金额、概率、库存、发放、撤销、风控 |
 | 外部平台 | 能力探测、授权、失败降级、责任边界 |
 
-
 ## Phase 2：任务拆分
 
 读取 Phase 1 生成的 `.docs/[文件名]/[YYYY-MM-DD]/design.md`，在同一目录输出 `.docs/[文件名]/[YYYY-MM-DD]/task.md`。
@@ -134,11 +132,10 @@ depends: all
 - [交互入口] [用户操作] → [用户可见结果]
 ```
 
-## 执行操作
+## 执行
 
-Phase 1 输出 `design.md`，Phase 2 输出 `task.md`。
+Phase 1 输出 `design.md`，Phase 2 输出 `task.md`。完成后询问用户：
 
-- **询问用户**:
-  - 调用 `/grill-with-docs` 审查设计与任务
-  - 直接调用 `/implement` 开始实现
-  - 停在计划阶段
+- 调用 `/grill-with-docs` 审查设计与任务
+- 直接调用 `/implement` 开始实现
+- 停在计划阶段
