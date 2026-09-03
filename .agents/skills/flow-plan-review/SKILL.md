@@ -3,7 +3,7 @@ name: flow-plan-review
 description: "在 flow-plans 之后、实现前审查计划，重新建立决策到 design.md 和 task.md 的追踪映射，并通过场景反证发现遗漏；问题修正后进入 flow-implement。不适用于 bugfix 或实现代码审查。Use automatically after flow-plans and before implementation."
 metadata:
   author: icc-grow
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # 计划审查 (Plan Review)
