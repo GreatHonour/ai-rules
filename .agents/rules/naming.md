@@ -17,7 +17,7 @@ description: 创建任何新文件、变量、函数或组件时加载。确认�
 | 组件文件夹   | `kebab-case`             | `coupon-card/`              |
 | 组件文件     | 与文件夹同名             | `coupon-card/coupon-card.vue` |
 | hooks 文件   | `use` 前缀 + `camelCase` | `useOrderList.ts`           |
-| 工具函数文件 | `kebab-case`             | `date-format.ts`            |
+| 工具函数文件 | `camelCase`             | `dateFormat.ts`            |
 | API / 类型   | 固定命名                 | `api.ts`、`types.ts`        |
 
 ---
@@ -33,15 +33,6 @@ description: 创建任何新文件、变量、函数或组件时加载。确认�
 | 事件处理     | `handle` + 事件源 + 事件类型         | `handleCouponSelect()`                   |
 | 类型/接口    | `PascalCase`                         | `CouponItem`、`OrderStatus`             |
 | 枚举         | `PascalCase`，值 `UPPER_SNAKE_CASE`  | `enum OrderStatus { PENDING = 'PENDING' }` |
-
----
-
-## 🧩 组件前缀
-
-> 完整前缀和索引参见 [components.md](./components.md)。
-
-- 基础组件：`I` 前缀 → `i-button`、`i-input`
-- 业务组件：`BI` 前缀 → `bi-coupon-card`、`bi-user-avatar`
 
 ---
 
