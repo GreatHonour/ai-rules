@@ -7,8 +7,6 @@ description: 当你要编写 CSS、使用 Tailwind 类名、处理主题色或�
 
 > 组件样式的**唯一规范**。所有样式写法、映射模式、hover 约定都在这里，其他文件不重复。
 
----
-
 ## 1. Tailwind 优先原则
 
 项目已扩展 Tailwind 配置以支持精确数值类名（如 `text-12` `h-38` `px-28`），优先使用 Tailwind 类名完成样式。
@@ -18,22 +16,18 @@ description: 当你要编写 CSS、使用 Tailwind 类名、处理主题色或�
 - 复杂 CSS 动画 / 伪元素
 - `:not()` 排除选择器
 
-💡 **注意：**
+**注意事项：**
 - 使用自定义数值类名时，直接写数值：`text-12` 而非 `text-xs`
 - `<style>` 必须加 `scoped`
 - 禁止硬编码颜色值，用 `var(--i-color-xxx)` 或 Tailwind 主题色
 - 禁止使用 Tailwind 原生颜色（如 `bg-purple-500`），改用 `bg-primary`
 
----
-
 ## 2. 动态样式模式（核心）
 
 ### 静态 vs 动态分离
 
-| 层级 | 放在哪 | 示例 |
-| ---- | ------ | ---- |
-| 静态通用样式 | template `class` | `inline-flex items-center transition-all` |
-| 动态变体样式 | `computed` 返回 `:class` | 因 type/size/mode 变化的 Tailwind class |
+- **静态通用样式** → template `class`（如 `inline-flex items-center transition-all`）
+- **动态变体样式** → `computed` 返回 `:class`（因 type/size/mode 变化的 Tailwind class）
 
 ### 映射对象模式
 
@@ -56,24 +50,19 @@ const classes = computed(() => [
 ]);
 ```
 
----
-
 ## 3. BEM 与状态管理
 
 ### 命名规范
 
-| 层级 | 格式 | 示例 |
-| ---- | ---- | ---- |
-| Block | `i-{name}` | `i-button` |
-| Element | `i-{name}__{el}` | `i-button__loading` |
-| Modifier | `i-{name}--{mod}` | `i-button--primary` |
-| State | `is-{state}` | `is-disabled`, `is-plain`, `is-text` |
+- **Block** → `i-{name}`（如 `i-button`）
+- **Element** → `i-{name}__{el}`（如 `i-button__loading`）
+- **Modifier** → `i-{name}--{mod}`（如 `i-button--primary`）
+- **State** → `is-{state}`（如 `is-disabled`, `is-plain`, `is-text`）
 
 ### 状态类的双重用途
 
 1. **标记模式** — 供 `<style scoped>` hover 选择器使用
 2. **携带样式** — 如 `DISABLED_STYLE` 中的 `is-disabled` 同时携带 Tailwind 类名
-
 
 ## 4. 主题系统
 

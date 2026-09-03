@@ -9,6 +9,7 @@ description: NestJS 模块、Controller、Service、依赖注入、校验、异�
 ## 1. 文件与目录结构
 
 按业务能力聚合，禁止按技术层全局散放：
+
 - 模块目录：`src/users/`、`src/orders/`
 - Module：`users.module.ts`
 - Controller：`users.controller.ts`
@@ -17,8 +18,6 @@ description: NestJS 模块、Controller、Service、依赖注入、校验、异�
 - Entity/Model：`entities/user.entity.ts` 或 `models/user.model.ts`（按项目 ORM 统一）
 - 常量：模块内 `constants/` 或共享 `common/constants/`
 - Guard/Pipe/Interceptor：业务专用放模块内，通用放 `common/`
-
----
 
 ## 2. Module
 
@@ -36,8 +35,6 @@ description: NestJS 模块、Controller、Service、依赖注入、校验、异�
 })
 export class UsersModule {}
 ```
-
----
 
 ## 3. Controller
 
@@ -60,8 +57,6 @@ export class UsersController {
 }
 ```
 
----
-
 ## 4. Service
 
 - 承载业务逻辑：业务规则、状态变更、事务边界、外部依赖调用
@@ -82,8 +77,6 @@ export class UsersService {
 }
 ```
 
----
-
 ## 5. DTO 与校验
 
 - 请求 DTO 必须用 class，配合 `class-validator` 和 `ValidationPipe`
@@ -102,8 +95,6 @@ export class CreateUserDto {
   readonly email: string = '';
 }
 ```
-
----
 
 ## 6. Provider 与依赖注入
 
@@ -128,16 +119,13 @@ export const PAYMENT_CLIENT = 'PAYMENT_CLIENT';
 export class PaymentsModule {}
 ```
 
----
-
 ## 7. Guard / Pipe / Interceptor / Decorator
 
-| 类型 | 用途 | 禁止 |
-|------|------|------|
-| Guard | 鉴权、权限、访问控制 | 业务数据变更 |
-| Pipe | 参数转换、输入校验 | 访问数据库做业务判断 |
-| Interceptor | 响应包装、耗时统计、序列化 | 吞掉异常或改变业务语义 |
-| Decorator | 提取请求上下文、声明元数据 | 隐藏复杂业务逻辑 |
+**用途和禁止项：**
+- **Guard** — 鉴权、权限、访问控制（禁止业务数据变更）
+- **Pipe** — 参数转换、输入校验（禁止访问数据库做业务判断）
+- **Interceptor** — 响应包装、耗时统计、序列化（禁止吞掉异常或改变业务语义）
+- **Decorator** — 提取请求上下文、声明元数据（禁止隐藏复杂业务逻辑）
 
 ```typescript
 export const CurrentUser = createParamDecorator(
@@ -147,8 +135,6 @@ export const CurrentUser = createParamDecorator(
   },
 );
 ```
-
----
 
 ## 8. 异常处理
 
@@ -163,8 +149,6 @@ if (!user) {
   throw new NotFoundException('用户不存在');
 }
 ```
-
----
 
 ## 9. 配置
 
@@ -185,8 +169,6 @@ export class ApiClientConfig {
 }
 ```
 
----
-
 ## 10. 日志
 
 - 使用 NestJS Logger 或项目日志封装，禁止 `console.log`
@@ -198,17 +180,14 @@ export class ApiClientConfig {
 private readonly logger = new Logger(UsersService.name);
 ```
 
----
-
 ## 11. 测试
 
-| 类型 | 测试重点 |
-|------|---------|
-| Controller | 路由参数、DTO 绑定、状态码、Service 调用 |
-| Service | 业务分支、异常分支、依赖调用、事务边界 |
-| Guard | 允许/拒绝路径、元数据读取、异常类型 |
-| Pipe | 转换结果、校验失败、边界输入 |
-| Interceptor | 响应转换、异常透传、副作用可控性 |
+**测试重点：**
+- **Controller** — 路由参数、DTO 绑定、状态码、Service 调用
+- **Service** — 业务分支、异常分支、依赖调用、事务边界
+- **Guard** — 允许/拒绝路径、元数据读取、异常类型
+- **Pipe** — 转换结果、校验失败、边界输入
+- **Interceptor** — 响应转换、异常透传、副作用可控性
 
 ```typescript
 describe('UsersService', () => {
@@ -217,8 +196,6 @@ describe('UsersService', () => {
   });
 });
 ```
-
----
 
 ## 常犯错误
 

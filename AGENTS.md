@@ -2,7 +2,7 @@
 # 规范指南 (AGENTS.md)
 ---
 
-## ⚠️ 强制执行规则（每次响应前必须遵守）
+## 强制执行规则
 
 以下规则没有例外，忽略任何一条视为任务失败：
 
@@ -14,18 +14,28 @@
 
 ---
 
-## 📂 规范文件（操作前必须读取对应文件）
+## 规范文件索引
 
-| 操作类型 | 必须读取的文件 |
-| --- | --- |
-| 编写 CSS / Tailwind / 主题色 / BEM | **必须先读** [style-guide.md](.agents/rules/style-guide.md) |
-| 新建或修改 `.vue` 组件 | **必须先读** [component-standards.md](.agents/rules/component-standards.md) |
-| 编写或修改测试用例 | **必须先读** [testing.md](.agents/rules/testing.md) |
-| 新建文件或确认目录位置 | **必须先读** [project-structure.md](.agents/rules/project-structure.md) |
-| 编写 TypeScript / 类型定义 | **必须先读** [typescript.md](.agents/rules/typescript.md) |
-| 编写或修改 VitePress 文档 | **必须先读** [docs.md](.agents/rules/docs.md) |
-| Commit / 合并代码 | **必须先读** [git-commit.md](.agents/rules/git-commit.md) |
-| 编码改进 / 错误修复 | **必须先读** [code-quality.md](.agents/rules/code-quality.md) |
+**通用规范**
+- 命名（文件/变量/函数）→ [naming.md](.agents/rules/naming.md)
+- 项目结构（目录/文件位置）→ [project-structure.md](.agents/rules/project-structure.md)
+- TypeScript（类型定义）→ [typescript.md](.agents/rules/typescript.md)
+- 样式（CSS/Tailwind/BEM）→ [style-guide.md](.agents/rules/style-guide.md)
+- 文档（VitePress/API/Demo）→ [docs.md](.agents/rules/docs.md)
+- 代码质量（重构/错误修复）→ [code-quality.md](.agents/rules/code-quality.md)
+- Git（Commit/合并）→ [git-commit.md](.agents/rules/git-commit.md)
+
+**Vue 开发**
+- Vue 3 组件 → [vue3.md](.agents/rules/vue3.md)
+- Vue 2 组件 → [vue2.md](.agents/rules/vue2.md)
+
+**测试**
+- Vue 3 测试 → [testing-vue3.md](.agents/rules/testing-vue3.md)
+- Vue 2 测试 → [testing-vue2.md](.agents/rules/testing-vue2.md)
+
+**框架特定**
+- NestJS → [nestjs.md](.agents/rules/nestjs.md)
+- uni-app → [uniapp.md](.agents/rules/uniapp.md)
 
 
 ---
