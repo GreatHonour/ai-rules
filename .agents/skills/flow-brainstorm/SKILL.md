@@ -1,6 +1,6 @@
 ---
 name: flow-brainstorm
-description: "必须用于任何新功能、新组件、产品流程、活动或行为变更。适用于：需求不明确、范围未定义、存在多种方案、需要设计决策、跨模块变更、新业务规则。不适用于 bug 或边界明确的小改动 - 那些用 bugfix。You MUST use this before ANY new feature, component, product flow, campaign, or behavior change. Use when requirements unclear, scope undefined, multiple approaches possible, design decisions needed. DO NOT use for bugs or clearly-defined small changes."
+description: "必须用于任何新功能、新组件、产品流程、活动或行为变更。适用于：需求不明确、范围未定义、存在多种方案、需要设计决策、跨模块变更、新业务规则。不适用于 bug 或边界明确的小改动。You MUST use this before ANY new feature, component, product flow, campaign, or behavior change. Use when requirements unclear, scope undefined, multiple approaches possible, design decisions needed, cross-module changes, new business rules. DO NOT use for bugs or clearly-defined small changes."
 metadata:
   author: icc-grow
   version: "2.1.0"
@@ -9,7 +9,7 @@ metadata:
 # 头脑风暴 (从想法到决策)
 - **头脑风暴阶段，不要查看无关的代码文件和规则文件** 
 
-**执行流程：** 需求分流 → 业务闭环 → 阻塞约束 → 方案比较 → 交互与边界 → 决策摘要 → plans
+**执行流程：** 需求分流 → 业务闭环 → 阻塞约束 → 方案比较 → 交互与边界 → 决策摘要 → flow-plans
 
 ## 通用规则
 
@@ -19,8 +19,8 @@ metadata:
 4. 阻塞问题优先提供 2-3 个互斥选项；无法合理互斥时使用开放式问题，同时给出推荐值和理由。
 5. 风险和边界根据需求类型筛选，不套用固定清单；每个待确认项给出建议值和理由。
 6. 涉及概率、资金、库存、隐私、权限、安全、合规或外部平台时，标记风险和责任人；需外部确认的事项不得擅自定论。
-7. 不在本阶段定义完整 Props、接口字段、类型签名或任务拆分；这些属于 `plans`。仅记录会改变业务契约的字段决策。
-8. 未清除阻塞决策前不得进入 `plans`，也不得开始实现。
+7. 不在本阶段定义完整 Props、接口字段、类型签名或任务拆分；这些属于 `flow-plans`。仅记录会改变业务契约的字段决策。
+8. 未清除阻塞决策前不得进入 `flow-plans`，也不得开始实现。
 
 ## 第一步：需求分流
 

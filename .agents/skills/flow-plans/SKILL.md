@@ -1,6 +1,6 @@
 ---
 name: flow-plans
-description: "用于业务决策已完成且需要技术设计 + 任务拆解时。前置条件：范围已定义、规则已确认、边界已设定。将决策摘要或完整需求转换为 design.md 和 task.md。如果决策不完整 - 先回到 brainstorm。Use when business decisions are COMPLETE and you need technical design + task breakdown. Converts requirements into design.md and task.md. DO NOT use if decisions incomplete - return to brainstorm."
+description: "用于业务决策已完成且需要技术设计 + 任务拆解时。前置条件：范围已定义、规则已确认、边界已设定。将决策摘要或完整需求转换为 design.md 和 task.md。如果决策不完整 - 先回到 flow-brainstorm。Use when business decisions are COMPLETE and you need technical design + task breakdown. Prerequisites: scope defined, rules confirmed, boundaries set. Converts decision summary or complete requirements into design.md and task.md. DO NOT use if decisions incomplete - return to flow-brainstorm."
 metadata:
   author: icc-grow
   version: "2.3.0"
@@ -8,7 +8,7 @@ metadata:
 
 # 规划 (Plans)
 
-将 `brainstorm` 的决策摘要或用户直接提供的完整需求转换为同一目录下的 `design.md` 和 `task.md`。输出目录固定为项目根目录 `.docs/[文件名]/[YYYY-MM-DD]/`；`[文件名]` 是不含扩展名的小写英文目录标识，命名规范见 [structure.md](./template/structure.md)。
+将 `flow-brainstorm` 的决策摘要或用户直接提供的完整需求转换为同一目录下的 `design.md` 和 `task.md`。输出目录固定为项目根目录 `.docs/[文件名]/[YYYY-MM-DD]/`；`[文件名]` 是不含扩展名的小写英文目录标识，命名规范见 [structure.md](./template/structure.md)。
 
 **执行流程：** Phase 1 输出 design.md → Phase 2 输出 task.md → 调用 `/flow-plan-review`
 
@@ -20,9 +20,9 @@ metadata:
 
 ### 规则
 
-1. **输入验证**：以已确认的决策摘要或完整需求为输入；发现缺失信息会改变业务规则、权限、交互、边界、优先级或交付范围时，停止设计并返回 `brainstorm/SKILL.md`。
+1. **输入验证**：以已确认的决策摘要或完整需求为输入；发现缺失信息会改变业务规则、权限、交互、边界、优先级或交付范围时，停止设计并返回 `flow-brainstorm/SKILL.md`。
 2. **读取上下文**：只读取本次需求直接相关的代码、文档和规则，沿用项目已有结构、命名和工具链。
-3. **设计范围**：一份 `design.md` 覆盖本次交付和全部已确认决策；规模无法在一份文档内保持清晰时，返回 `brainstorm` 拆分需求。
+3. **设计范围**：一份 `design.md` 覆盖本次交付和全部已确认决策；规模无法在一份文档内保持清晰时，返回 `flow-brainstorm` 拆分需求。
 4. **设计内容**：写清模块职责、依赖方向、状态归属、数据流转和具体契约，不输出完整实现代码；功能点使用 `[条件/操作] → [预期结果]` 描述可观察行为。
 5. **技术补充**：可由现有代码和项目约定确定的技术细节允许补充，并在具体内容后标记”设计阶段补充”；例如：`- 错误语义：沿用项目统一错误码规范（设计阶段补充）`。补充内容不得改变已确认业务决策。
 6. **避免模糊**：只保留当前需求需要的章节，不为套模板创建空章节，不使用”待定”、`any`、”体验良好”或”功能正常”等模糊表达。

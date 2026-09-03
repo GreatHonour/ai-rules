@@ -1,6 +1,6 @@
 ---
 name: flow-implement
-description: "按 design.md 和 task.md 的依赖顺序实现未完成任务。前置条件：必须存在 design.md 和 task.md。如果没有设计文档 - 先调用 plans；如果需求不明确 - 先调用 brainstorm。完成测试与质量检查后更新任务状态。Use when approved design and task list exist and user is ready to implement. DO NOT use without design.md/task.md - call plans first."
+description: "按 design.md 和 task.md 的依赖顺序实现未完成任务。前置条件：必须存在 design.md 和 task.md。如果没有设计文档 - 先调用 plans；如果需求不明确 - 先调用 brainstorm。完成测试与质量检查后更新任务状态。Use when approved design and task list exist and user is ready to implement. Prerequisites: must have design.md and task.md. Implement incomplete tasks in dependency order per design.md and task.md. If no design docs - call plans first; if requirements unclear - call brainstorm first. Update task status after completing tests and quality checks. DO NOT use without design.md/task.md - call plans first."
 metadata:
   author: icc-grow
   version: "2.2.0"

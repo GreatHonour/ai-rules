@@ -1,6 +1,6 @@
 ---
 name: flow-archive
-description: "在功能实现或 bugfix 完成且通过验证后归档本次迭代。前置条件：所有任务已完成、review 已通过或按流程豁免、必要的 E2E 已完成。更新功能日志到 log.md、清理已有过程文件（review.md）、将有证据的经验候选记录到 retro.md、执行 Git 提交。Use at the end of feature or bugfix workflow. DO NOT use if tasks incomplete or review failed."
+description: "在功能实现或 flow-bugfix 完成且通过验证后归档本次迭代。前置条件：所有任务已完成、flow-review 已通过或按流程豁免、必要的 flow-e2e 已完成。更新功能日志到 log.md、清理已有过程文件（review.md）、将有证据的经验候选记录到 retro.md、执行 Git 提交。Archive current iteration after feature implementation or flow-bugfix completes and passes verification. Prerequisites: all tasks completed, flow-review passed or exempted per process, necessary flow-e2e completed. Update feature log to log.md, clean up existing process files (review.md), record evidence-based experience candidates to retro.md, execute Git commit."
 metadata:
   author: icc-grow
   version: "2.1.0"
@@ -54,8 +54,8 @@ metadata:
 
 归档摘要输出后执行 git 提交。
 
-1. **检查变更归属**：用 `git status` 检查变更归属，只提交本次任务相关文件。
-2. **成对提交**：测试与对应实现必须成对纳入，不提交用户或其他迭代的修改。
-3. **提交内容**：不查看 `diff` 的具体内容，只根据文件路径和本次任务范围判断归属。
+**检查变更归属**：用 `git status` 检查变更归属，只提交本次任务相关文件。
+**成对提交**：测试与对应实现必须成对纳入，不提交用户或其他迭代的修改。
+**提交内容**： `git diff` 内容，一个 commit 只做一件事，不同模块/功能分开提交
 
 归档和提交完成后，工作流结束。

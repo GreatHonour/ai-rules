@@ -1,6 +1,6 @@
 ---
 name: flow-review
-description: "审查本次实现的正确性和代码质量，输出分级问题清单到 review.md。前置条件：必须有已完成的代码改动。如果没有改动或任务未完成 - 拒绝执行。经用户确认后修复问题并验证。Use after implementation is complete and changes need review before E2E. DO NOT use without code changes."
+description: "审查本次实现的正确性和代码质量，输出分级问题清单到 review.md。前置条件：必须有已完成的代码改动。如果没有改动或任务未完成 - 拒绝执行。经用户确认后修复问题并验证。Use after implementation is complete and changes need review before E2E. Prerequisites: must have completed code changes. Review correctness and code quality, output graded issue list to review.md. Reject if no changes or tasks incomplete. Fix and verify issues after user confirmation. DO NOT use without code changes."
 metadata:
   author: icc-grow
   version: "2.1.0"
@@ -65,7 +65,7 @@ metadata:
 
 ## 执行操作
 
-若从 `implement` 内部调用，由 `implement` 控制后续流程，review 完成后不主动路由。独立调用时：
+若从 `flow-implement` 内部调用，由 `flow-implement` 控制后续流程，review 完成后不主动路由。独立调用时：
 
 - **询问用户**：
 

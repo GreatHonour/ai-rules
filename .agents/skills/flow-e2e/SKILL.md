@@ -1,6 +1,6 @@
 ---
 name: flow-e2e
-description: "在真实浏览器中验证集成场景，记录证据、处理失败并更新验证状态。前置条件：必须存在 task.md 的集成验证任务或 fix.md 的验证场景。如果没有验证任务 - 询问用户是否需要。适用于：跨组件交互、完整用户流程、浏览器特定行为。Use after review or bugfix when complete user flows require browser verification. DO NOT use without verification tasks."
+description: "在真实浏览器中验证集成场景，记录证据、处理失败并更新验证状态。前置条件：必须存在 task.md 的集成验证任务或 fix.md 的验证场景。如果没有验证任务 - 询问用户是否需要。适用于：跨组件交互、完整用户流程、浏览器特定行为。Use after review or bugfix when complete user flows require browser verification. Prerequisites: must have integration verification tasks in task.md or verification scenarios in fix.md. Verify integration scenarios in real browser, record evidence, handle failures and update verification status. Applicable to: cross-component interactions, complete user flows, browser-specific behaviors. DO NOT use without verification tasks."
 metadata:
   author: icc-grow
   version: "2.3.0"
@@ -96,7 +96,7 @@ metadata:
 
 检查 `git status`；若工具异步写回临时文件，继续清理并复查，直到没有本次 E2E 产生的残留。
 
-### 流转下游
+### 执行操作
 
 - 所有验证对象均已完成 → 调用 `/flow-archive`
-- 存在未完成验证 → 停止并保留未完成状态，告知用户修复后重新调用 `flow-e2e/SKILL.md` 重跑失败场景，或确认跳过后调用 `flow-archive/SKILL.md`
+- 存在未完成验证 → 停止并保留未完成状态，告知用户修复后重新调用 `/flow-e2e` 重跑失败场景，或确认跳过后调用 `/flow-archive`
