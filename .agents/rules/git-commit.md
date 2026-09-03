@@ -27,6 +27,13 @@ description: 当你要帮用户写 commit message 或执行 git commit 的时候
 | `chore`    | 构建/工具链            |
 | `revert`   | 回滚                   |
 
+### 提交粒度原则
+
+- ✅ 一个 commit 只做一件事
+- ✅ 不同模块/功能分开提交
+- ✅ 使用 `git add <file>` 精准暂存文件
+- ❌ 避免 `git add .` 把所有修改混在一起提交
+
 ### 示例
 
 ```bash
@@ -40,7 +47,10 @@ refactor(request): 重构网络请求拦截器
 # ❌ 禁止
 git commit -m "fix bug"
 git commit -m "修改了一些东西"
+git add . && git commit -m "更新了很多文件"  # 多个模块混在一起
 
 # ✅ 规范
 git commit -m "fix(coupon): 修复微信小程序下优惠券图片不显示问题"
+git add src/rules/*.md && git commit -m "docs(rules): 统一更新代码规范"
+git add src/skill/flow.md && git commit -m "feat(flow): 新增流程审查功能"
 ```

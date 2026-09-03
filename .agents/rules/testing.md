@@ -1,42 +1,30 @@
 ---
 trigger: model_decision
-description: 当你要编写或修改测试用例时，来这里查看测试模板、目录结构和覆盖要求。
+description: 编写或修改测试用例时查看测试语法、断言约定和覆盖要求
 ---
 
 ## 测试规范
 
-### 编写测试前置判断（强制）
+### 前置检查（强制）
 
-不要直接套用下方测试模板。先从项目配置确认 **Vue 主版本** 和 **测试运行器**，再选择对应语法：
+编写测试前必须确认项目配置，禁止凭经验猜测：
 
-1. 读取 `package.json` 中 `vue` 的主版本。
-2. Vue 2 通常同时存在 `vue-template-compiler`，使用 `@vue/test-utils` v1；Vue 3 通常存在 `@vue/compiler-sfc`，使用 `@vue/test-utils` v2。
-3. 根据 `jest.config.*` / `vitest.config.*`、脚本命令和已存在的测试文件，确认使用 Jest 还是 Vitest。配置和现有用例冲突时，以项目实际可运行配置为准。
-4. 若版本或运行器无法确认，先检查锁文件和 CI 配置，禁止凭经验猜测。
+1. **Vue 版本**：读取 `package.json` 中 `vue` 的主版本
+2. **测试运行器**：检查 `jest.config.*` / `vitest.config.*` 和现有测试文件确认是 Jest 还是 Vitest
+3. **版本无法确认时**：检查锁文件和 CI 配置，不要套用模板
 
-### Vue 版本与测试语法
+### Vue 2 测试要点
 
-| 项目类型 | 推荐测试工具 | 测试语法要点 |
-| --- | --- | --- |
-| Vue 2 | `@vue/test-utils` v1 + Jest/Vitest | Options API；通过 `wrapper.vm` 访问 `data` / `computed` / `methods`；组件事件使用 `wrapper.emitted()`；异步更新使用 `Vue.nextTick()` 或项目已有 helper |
-| Vue 3 | `@vue/test-utils` v2 + Vitest/Jest | Composition API / `<script setup>`；通过 `setProps`、`setValue`、`emitted` 验证公开行为；异步更新使用 `nextTick` / `flushPromises`；Vitest 才能使用 `vi.*` |
+**测试工具**：`@vue/test-utils` v1 + Jest/Vitest
 
-不要混用以下 API：
+**关键语法**：
+- Props 传参：`mount(Component, { propsData: { title: '标题' } })`
+- 访问实例：`wrapper.vm.data` / `wrapper.vm.computedProp` / `wrapper.vm.method()`
+- 事件断言：`wrapper.emitted('event-name')`
+- Mock 函数：Jest 用 `jest.fn()`，Vitest 用 `vi.fn()`
 
-- Vue 2 不使用 `vi`、`defineProps`、`defineEmits`、`onMounted` 等 Vue 3 API。
-- Vue 3 不使用 `this.$set`、`this.$destroy` 或 Vue 2 专属的实例操作。
-- Jest 使用 `jest.fn()` / `jest.spyOn()`；Vitest 使用 `vi.fn()` / `vi.spyOn()`。Mock API 必须与运行器一致。
-
-### 技术栈
-
-- **Vue 2**：`@vue/test-utils` v1 + 项目已配置的 Jest 或 Vitest
-- **Vue 3**：`@vue/test-utils` v2 + 项目已配置的 Vitest 或 Jest
-- 测试位置：组件同级 `__tests__/` 目录，文件名与组件名一致
-
-### 测试骨架
-
+**测试骨架**：
 ```typescript
-// Vue 2 + Jest 示例：
 import { mount } from '@vue/test-utils';
 import Component from '../Component.vue';
 
@@ -45,9 +33,30 @@ describe('Component', () => {
     const wrapper = mount(Component, { propsData: { title: '标题' } });
     expect(wrapper.text()).toContain('标题');
   });
-});
 
-// Vue 3 + Vitest 示例：
+  it('点击按钮时应触发事件', async () => {
+    const wrapper = mount(Component);
+    await wrapper.find('button').trigger('click');
+    expect(wrapper.emitted('submit')).toBeTruthy();
+  });
+});
+```
+
+**禁止使用**：`vi`（Vitest 专属）、`defineProps`、`onMounted`、Composition API
+
+### Vue 3 测试要点
+
+**测试工具**：`@vue/test-utils` v2 + Vitest/Jest
+
+**关键语法**：
+- Props 传参：`mount(Component, { props: { title: '标题' } })`
+- 避免访问 `wrapper.vm`，通过 props/events 验证行为
+- 事件断言：`wrapper.emitted('eventName')`
+- Mock 函数：Vitest 用 `vi.fn()`，Jest 用 `jest.fn()`
+- 异步更新：`await nextTick()` 或 `await flushPromises()`
+
+**测试骨架**：
+```typescript
 import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 import Component from '../Component.vue';
@@ -58,33 +67,48 @@ describe('Component', () => {
     await wrapper.setProps({ title: '新标题' });
     expect(wrapper.text()).toContain('新标题');
   });
+
+  it('点击按钮时应触发事件', async () => {
+    const wrapper = mount(Component);
+    await wrapper.find('button').trigger('click');
+    expect(wrapper.emitted('submit')).toHaveLength(1);
+  });
 });
 ```
 
-### 分区与断言约定
+**禁止使用**：`propsData`、`wrapper.vm` 直接访问、`this.$set`、`this.$destroy`、Options API 专属方法
 
-- 用 `// ==================== 分类名 ====================` 分区
-- **禁止断言样式相关内容**：不检测 Tailwind 原子类、BEM 装饰类、内联样式等纯样式实现，避免每次改样式都导致测试报错
-- 断言优先级（从高到低）：
-  1. 逻辑与数据：直接断言 `wrapper.vm` 的 computed / data
-  2. 子组件交互：`findComponent()` + `props()` / `emitted()`
-  3. 渲染文本：`wrapper.text()` 先做空白归一化（`.replace(/\s+/g, '')`）再 `toContain`，避免模板排版空格导致误报
-- 确需 DOM 锚点时（如条件渲染节点），使用 `data-test` 属性，不复用样式类名
 
-### Vue 3 环境测试技巧（仅在项目确认为 Vue 3 且使用对应运行器时适用）
+### 断言规则
 
-- teleport 内容（如 IPopup 默认 teleport 到 body）不在组件树内，`wrapper.text()` 取不到，改用 `document.body.textContent` 断言
-- 懒加载路由组件（`() => import(...)`）挂载需多轮宏任务，`flushPromises` 不够时用 `vi.waitFor` 轮询断言目标出现
-- 测试互斥态（如 viewState 为 null ⟺ state 为 null 的骨架屏语义）时，必须同步置空所有关联 ref，只改一侧会构造出真实链路不存在的状态组合
+**禁止断言样式**：不检测样式类名、内联样式，避免样式改动导致测试失败。
+**断言优先级**（从高到低）：
+1. **逻辑与数据**：Vue 2 可直接断言 `wrapper.vm.computedProp`；Vue 3 通过 props/events 验证
+2. **子组件交互**：`findComponent(ChildComponent).props('propName')` 和 `emitted('eventName')`
+3. **渲染文本**：`wrapper.text().replace(/\s+/g, '')` 归一化空白后再 `toContain`
+**DOM 锚点**：条件渲染用 `data-testid` 属性定位，不复用样式类名。
 
 ### 覆盖要求
 
-每个组件**必须**覆盖：
+每个组件必须覆盖：
 
-| 分类 | 测试点 |
-| ---- | ------ |
+| 分类 | 测试点 | 示例 |
+| --- | --- | --- |
+| Props | 必传 props 渲染；关键 props 变化响应 | `setProps({ disabled: true })` 后按钮不可点击 |
+| Events | 用户交互触发的事件及参数 | 点击按钮触发 `submit` 事件，参数包含表单数据 |
+| 条件渲染 | 不同状态下的显示/隐藏 | `loading` 为 true 时显示加载图标 |
+| 核心逻辑 | Computed/方法的返回值 | Vue 2: `wrapper.vm.filteredList.length === 2` |
 
-### 核心规则
+### 组织结构
 
-- 中文描述：`'应{行为}'` 或 `'{场景}时应{行为}'`
-- 运行：`pnpm test`，单组件：`pnpm test -- --filter i-button`
+- **测试位置**：组件同级 `__tests__/` 目录，文件名与组件名一致
+- **分区注释**：用 `// ==================== Props ====================` 分隔场景
+- **描述规范**：`'应{行为}'` 或 `'{场景}时应{行为}'`
+
+### 运行命令
+
+```bash
+pnpm test                        # 全量测试
+pnpm test -- --filter Button     # 单文件测试
+```
+

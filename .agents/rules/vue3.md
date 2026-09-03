@@ -5,13 +5,18 @@ description: 当你要编写 Vue 3 组件（.vue 文件）、使用 Composition 
 
 # Vue 3 最佳实践（通用 · Vue 3.4+）
 
+## 快速索引
+[响应式选型](#3-响应式选型) · [Props/Emits](#4-props--emits--slots) · [watch 使用时机](#6-watch) · [生命周期](#8-生命周期) · [Composables 规范](#9-composables-骨架) · [响应式工具 API](#10-响应式工具-api) · [性能优化](#13-性能优化) · [常见陷阱](#14-常见陷阱) · [AI 常犯错误](#常犯错误)
+
+---
+
 ## 1. SFC 结构
 
-顺序：`<template>` → `<script setup lang="ts">` → `<style scoped>`。禁止 Options API / `defineComponent`。
+顺序：`<template>` → `<script setup lang="ts">` → `<style scoped>`。统一使用 Composition API。
 
 ## 2. script setup 内部排列
 
-```
+```typescript
 import type → import 值
 路由（useRoute / useRouter）
 响应式状态（ref / shallowRef）
@@ -32,7 +37,7 @@ watch / watchEffect
 | DOM/组件引用 | `ref<HTMLElement>()` / `ref<Exposed>()` |
 | 派生值 | `computed()` |
 | 可写派生 | `computed({ get, set })` |
-| 需要解构响应性 | `reactive()` + `toRefs()` |
+| 需要解构的对象 | `reactive()` + `toRefs()` |
 
 **核心区别**：`ref` 通过 `.value` 可整体替换；`reactive` 解构丢失响应性，不可整体赋值。
 
@@ -142,6 +147,10 @@ function watchReset(source: () => unknown, keys: Array<keyof Form>, cond: (v: un
 
 `v-model` → `v-if/v-show` → `:动态绑定` → `静态属性` → `@事件`
 
+### 事件命名
+
+统一使用 kebab-case：`@user-select` 而非 `@userSelect`
+
 ### 条件 & 列表
 
 - 频繁切换 → `v-show`；否则 → `v-if`
@@ -182,7 +191,21 @@ export function useXxx(input: MaybeRefOrGetter<string>, options?: Options): Retu
 
 设计规则：命名 `useXxx`；返回 `ref` 不返回 `reactive`；入参支持 `MaybeRefOrGetter`；内部处理清理。
 
-## 10. Provide / Inject
+## 10. 响应式工具 API
+
+| API | 用途 |
+| --- | ---- |
+| `toValue(source)` | 统一取值 ref/getter/普通值 |
+| `toRef(obj, 'key')` | reactive 单属性转 ref |
+| `toRefs(obj)` | reactive 所有属性转 ref |
+| `readonly(ref)` | 只读代理（provide 用） |
+| `markRaw(obj)` | 永不代理 |
+| `effectScope()` | 批量收集/清理副作用 |
+| `nextTick()` | 等 DOM 更新 |
+| `defineModel()` | 3.4+ 极简 v-model |
+| `useTemplateRef()` | 3.5+ 模板引用 |
+
+## 11. Provide / Inject
 
 ```typescript
 export const CTX_KEY: InjectionKey<CtxType> = Symbol('ctx');
@@ -195,9 +218,16 @@ const ctx = inject(CTX_KEY);
 if (!ctx) throw new Error('Missing context');
 ```
 
-通信选型：父→子 Props · 子→父 Emits · 跨层 Provide/Inject · 全局 Pinia
+### 通信选型
 
-## 11. 内置组件
+| 场景 | 方案 |
+|------|------|
+| 父 → 子 | Props |
+| 子 → 父 | Emits |
+| 跨层级 | Provide/Inject |
+| 全局状态 | Pinia |
+
+## 12. 内置组件
 
 ```html
 <!-- Teleport -->
@@ -213,7 +243,7 @@ if (!ctx) throw new Error('Missing context');
 <Suspense><AsyncComp /><template #fallback><Loading /></template></Suspense>
 ```
 
-## 12. 性能优化
+## 13. 性能优化
 
 | 技术 | 场景 |
 | ---- | ---- |
@@ -224,7 +254,7 @@ if (!ctx) throw new Error('Missing context');
 | 异步组件 `defineAsyncComponent` | 路由懒加载 |
 | 常量提取 | 避免模板每次渲染创建临时对象/数组 |
 
-## 13. 常见陷阱
+## 14. 常见陷阱
 
 | 陷阱 | 解决 |
 | ---- | ---- |
@@ -237,7 +267,7 @@ if (!ctx) throw new Error('Missing context');
 | `async setup` 不渲染 | 需要包裹 `<Suspense>` |
 | `onMounted` 中子组件 ref 为 null | `nextTick()` 或 `watchEffect` |
 
-## 14. vue-router
+## 15. vue-router
 
 ```typescript
 const route = useRoute();
@@ -259,28 +289,17 @@ onBeforeRouteLeave(() => {
 { path: '/page', component: () => import('./Page.vue') }
 ```
 
-## 15. 高级 API 速查
+### RouterLink 最佳实践
 
-| API | 用途 |
-| --- | ---- |
-| `toValue(source)` | 统一取值 ref/getter/普通值 |
-| `toRef(obj, 'key')` | reactive 单属性转 ref |
-| `readonly(ref)` | 只读代理（provide 用） |
-| `markRaw(obj)` | 永不代理 |
-| `effectScope()` | 批量收集/清理副作用 |
-| `nextTick()` | 等 DOM 更新 |
-| `defineModel()` | 3.4+ 极简 v-model |
-| `useTemplateRef()` | 3.5+ 模板引用 |
+```vue
+<!-- 命名路由优于路径字符串 -->
+<RouterLink :to="{ name: 'Detail', params: { id: 1 } }">详情</RouterLink>
 
----
+<!-- 外部链接自动处理 -->
+<RouterLink to="https://example.com">外部链接</RouterLink>
 
-## 常犯错误
-
-> 以下为 AI 屡次犯错的记录，编写代码时务必自查。
-
-| # | 规则 | 备注 |
-|---|------|------|
-| 1 | 组件标签统一 PascalCase — `<IButton>` 而非 `<i-button>` | 全项目保持一致 |
-| 2 | 静态列定义不要用 `reactive` 包裹 — `const columns = COLUMNS` 即可，`reactive()` 产生无意义代理开销 | |
-| 3 | 模板禁止魔法数字 — 用命名常量如 `DisplayStatus.DRAFT` 替代 `1` | |
-| 4 | 优先用组件事件（`@change` 等）处理联动，不要用 `watch` — 组件已提供事件时用 watch 是隐式依赖且有性能开销 | ⚠️ 见 §6 |
+<!-- 激活类名样式 -->
+<RouterLink to="/about" active-class="is-active" exact-active-class="is-exact-active">
+  关于
+</RouterLink>
+```
