@@ -1,0 +1,15 @@
+{
+  "deliveryId": "example-2026-09-08",
+  "targetStage": "verified",
+  "repositories": [
+    { "id": "web", "path": "../web", "branch": "codex/example-web", "required": true },
+    { "id": "api", "path": "../api", "branch": "codex/example-api", "required": true }
+  ],
+  "testEnvironments": ["test"],
+  "platforms": ["web", "api"],
+  "crossProject": true,
+  "deployAdapter": "jenkins",
+  "migration": false,
+  "configuration": false,
+  "rollback": true
+}

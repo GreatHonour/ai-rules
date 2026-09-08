@@ -1,0 +1,7 @@
+{
+  "deliveryId": "example-2026-09-08",
+  "cases": [
+    { "id": "C1", "requirement": "R1", "feature": "用户登录成功", "platform": "web", "status": "pending" },
+    { "id": "C2", "requirement": "R1", "feature": "登录接口返回成功", "platform": "api", "status": "pending" }
+  ]
+}
