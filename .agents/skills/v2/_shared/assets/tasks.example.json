@@ -1,0 +1,11 @@
+{
+  "tasks": [
+    {
+      "id": "T1",
+      "title": "建立交付记录",
+      "status": "completed",
+      "depends": [],
+      "verification": "evidence/example-check.json"
+    }
+  ]
+}

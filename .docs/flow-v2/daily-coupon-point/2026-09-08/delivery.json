@@ -1,0 +1,36 @@
+{
+  "deliveryId": "daily-coupon-point",
+  "version": "0.1.0",
+  "documents": ["request.md"],
+  "repositories": ["ai-rules"],
+  "environments": ["development", "test"],
+  "design": null,
+  "tasks": null,
+  "sourceFacts": [],
+  "acceptance": null,
+  "deployments": [],
+  "facts": {
+    "endpoint": "/api/app/play/point/push",
+    "eventField": "event",
+    "userField": "userid",
+    "events": [
+      "DailyCouponEnterAuthPage",
+      "DailyCouponClickAuthorize",
+      "DailyCouponEnterPage",
+      "DailyCouponEnterActivityPage",
+      "DailyCouponHotAreaClick",
+      "DailyCouponPopupShow",
+      "DailyCouponPopupViewCoupon",
+      "DailyCouponPopupInviteFriend",
+      "DailyCouponPopupClose"
+    ],
+    "requiredFields": ["userid", "event", "time", "activityId"],
+    "verification": ["request-parameters", "success-response-parameters"]
+  },
+  "openGaps": [
+    "时间字段的准确名称、单位和时区",
+    "活动 ID 字段的准确名称与类型",
+    "成功响应中需要断言的具体字段",
+    "业务代码仓库或项目适配器"
+  ]
+}
