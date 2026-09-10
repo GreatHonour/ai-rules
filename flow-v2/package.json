@@ -1,0 +1,1 @@
+{"name":"flow-v2-tools","private":true,"type":"module","scripts":{"task:sync":"node scripts/sync-task.mjs","flow:validate":"node scripts/validate-flow.mjs"}}

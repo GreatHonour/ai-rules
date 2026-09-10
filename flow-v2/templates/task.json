@@ -1,0 +1,3 @@
+[
+  {"taskId":"T1","title":"[明确任务名]","featureId":"F-001","verifyId":"V-001","depends":[],"status":"pending","verify":"[可观察验证条件]","evidence":[],"databaseMigration":[],"productionRelease":[]}
+]
