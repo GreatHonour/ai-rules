@@ -1,0 +1,11 @@
+node_modules/
+dist/
+coverage/
+.agentctl/cache/
+.agentctl/staging-*/
+.agentctl/managed-*/
+.agentctl/backup-*/
+.agentctl/adopt-*/
+.agentctl/hash-*/
+.agents/overrides.local/
+*.log

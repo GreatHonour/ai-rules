@@ -1,0 +1,32 @@
+{
+  "name": "agentctl",
+  "version": "0.1.0",
+  "description": "Git-backed rule and skill package manager for agent workspaces",
+  "type": "module",
+  "bin": {
+    "agentctl": "dist/cli.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "check": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "commander": "^14.0.0",
+    "semver": "^7.7.2",
+    "yaml": "^2.8.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.1",
+    "@types/semver": "^7.5.8",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  },
+  "packageManager": "pnpm@10.12.0"
+}
