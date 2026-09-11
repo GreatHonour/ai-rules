@@ -52,7 +52,7 @@ function compareResourceMap(
   kind: ResourceKind,
   localResources: Readonly<Record<string, ResourceEntry>>,
   remoteResources: Readonly<Record<string, ResourceEntry>>,
-  plan: { updates: PlannedUpdate[]; rollbacks: RollbackWarning[]; skippedSkills: string[] },
+  plan: { updates: PlannedUpdate[]; rollbacks: RollbackWarning[]; skippedSkills: string[] }
 ): void {
   for (const [name, localEntry] of Object.entries(localResources)) {
     const remoteEntry = remoteResources[name];
@@ -85,22 +85,23 @@ export function planUpdates(manifest: Manifest, registry: Registry): UpdatePlan 
 
 /** 根据实际可应用更新构造下一版 manifest。 */
 function createUpdatedManifest(manifest: Manifest, plan: UpdatePlan, repositoryUrl: string, now: Date): Manifest {
-  const updateMap = new Map(plan.updates.map((update) => [`${update.kind}:${update.name}`, update.remoteEntry]));
-  const rules = Object.fromEntries(Object.entries(manifest.rules).map(([name, entry]) => [
-    name,
-    updateMap.get(`rules:${name}`) ?? entry,
-  ]));
-  const skills = Object.fromEntries(Object.entries(manifest.skills).map(([name, entry]) => {
-    const updatedEntry = updateMap.get(`skills:${name}`);
-    return [name, updatedEntry === undefined ? entry : { ...updatedEntry, managed: true as const }];
-  }));
+  const updateMap = new Map(plan.updates.map(update => [`${update.kind}:${update.name}`, update.remoteEntry]));
+  const rules = Object.fromEntries(
+    Object.entries(manifest.rules).map(([name, entry]) => [name, updateMap.get(`rules:${name}`) ?? entry])
+  );
+  const skills = Object.fromEntries(
+    Object.entries(manifest.skills).map(([name, entry]) => {
+      const updatedEntry = updateMap.get(`skills:${name}`);
+      return [name, updatedEntry === undefined ? entry : { ...updatedEntry, managed: true as const }];
+    })
+  );
   return { ...manifest, repositoryUrl, rules, skills, updatedAt: formatUtcDate(now) };
 }
 
 /** 检查、确认并事务式更新工作区受管资源。 */
 export async function updateProject(
   workspacePath: string,
-  dependencies: UpdateProjectDependencies = DEFAULT_DEPENDENCIES,
+  dependencies: UpdateProjectDependencies = DEFAULT_DEPENDENCIES
 ): Promise<UpdateProjectResult> {
   const manifest = await readManifest(workspacePath);
   const registry = await dependencies.fetchRegistry(manifest.registryUrl);
@@ -108,10 +109,10 @@ export async function updateProject(
   if (plan.updates.length === 0) {
     return { ...plan, status: 'current' };
   }
-  if (!await dependencies.confirm(plan)) {
+  if (!(await dependencies.confirm(plan))) {
     return { ...plan, status: 'cancelled' };
   }
-  const downloadRequests = plan.updates.map((update) => ({
+  const downloadRequests = plan.updates.map(update => ({
     kind: update.kind,
     name: update.name,
     repositoryUrl: registry.repositoryUrl,
@@ -121,7 +122,11 @@ export async function updateProject(
     const nextManifest = createUpdatedManifest(manifest, plan, registry.repositoryUrl, dependencies.now());
     await syncResources(workspacePath, downloadedBatch.resources, {
       manifest: nextManifest,
-      afterSwap: async () => writeAgentsDocument(workspacePath, Object.keys(nextManifest.rules)),
+      afterSwap: async () =>
+        writeAgentsDocument(
+          workspacePath,
+          Object.entries(nextManifest.rules).map(([name, entry]) => ({ name, description: entry.desc }))
+        ),
     });
     return { ...plan, status: 'updated' };
   } finally {

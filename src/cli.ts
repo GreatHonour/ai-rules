@@ -7,6 +7,8 @@ import { stdin, stdout } from 'node:process';
 import { pathToFileURL } from 'node:url';
 
 import { Command } from 'commander';
+import { checkbox } from '@inquirer/prompts';
+import chalk from 'chalk';
 
 import { configureProject } from './commands/config.js';
 import { initializeProject } from './commands/init.js';
@@ -42,7 +44,10 @@ async function askQuestion(promptText: string): Promise<string> {
 
 /** 将逗号分隔输入转换为名称数组。 */
 function parseCommaSeparated(value: string): readonly string[] {
-  return value.split(',').map((entry) => entry.trim()).filter((entry) => entry !== '');
+  return value
+    .split(',')
+    .map(entry => entry.trim())
+    .filter(entry => entry !== '');
 }
 
 /** 读取命令参数，非交互环境缺失时明确失败。 */
@@ -65,7 +70,7 @@ async function requireListOption(
   currentValue: readonly string[] | false | undefined,
   fieldName: string,
   promptText: string,
-  allowEmpty = false,
+  allowEmpty = false
 ): Promise<readonly string[]> {
   if (currentValue !== undefined) {
     return currentValue === false ? [] : currentValue;
@@ -111,17 +116,38 @@ async function selectReleaseType(resourceName: string): Promise<ReleaseType> {
   return answer;
 }
 
-/** 展示可选 rules 及其用途。 */
-function printRuleCatalog(registry: Registry): void {
-  stdout.write('可选 rules：\n');
-  for (const [ruleName, entry] of Object.entries(registry.rules)) {
-    stdout.write(`- ${ruleName}: ${entry.desc}\n`);
+/** 通过终端 checkbox 交互选择规则。 */
+async function selectRuleNames(registry: Registry, defaultRuleNames: readonly string[]): Promise<readonly string[]> {
+  if (!stdin.isTTY) {
+    throw new Error('非交互环境缺少必需参数: --rules');
   }
+  const selectedNames = await checkbox({
+    message: '请选择 rules（空格选中/取消，回车确认）',
+    choices: Object.entries(registry.rules).map(([name, entry]) => ({
+      name: `${name}(${chalk.dim(entry.desc)})`,
+      value: name,
+      checked: defaultRuleNames.includes(name),
+    })),
+  });
+  return selectedNames;
+}
+
+/** 根据命令参数或交互选择规则。 */
+async function collectRuleNames(
+  options: ProfileCommandOptions,
+  registry: Registry,
+  defaultRuleNames: readonly string[] = []
+): Promise<readonly string[]> {
+  if (options.rules !== undefined) {
+    return options.rules === false ? [] : options.rules;
+  }
+  return selectRuleNames(registry, defaultRuleNames);
 }
 
 /** 注册项目初始化命令。 */
 function registerInitCommand(program: Command): void {
-  program.command('init')
+  program
+    .command('init')
     .option('--workspace <path>', '目标工作区', process.cwd())
     .option('--registry <url>', '公开 registry URL', DEFAULT_REGISTRY_URL)
     .option('--name <name>', '项目名称')
@@ -134,22 +160,25 @@ function registerInitCommand(program: Command): void {
       const registryUrl = options.registry ?? DEFAULT_REGISTRY_URL;
       const project = await collectProjectProfile(options);
       const registry = await fetchRegistry(registryUrl);
-      printRuleCatalog(registry);
-      const ruleNames = await requireListOption(options.rules, '--rules', 'Rules（逗号分隔，可留空）: ', true);
-      await initializeProject({ workspacePath: options.workspace, registryUrl, project, ruleNames }, {
-        fetchRegistry: async () => registry,
-        downloadResources,
-        now: () => new Date(),
-        cliVersion: '1.0.0',
-        cleanupDownloads: true,
-      });
+      const ruleNames = await collectRuleNames(options, registry);
+      await initializeProject(
+        { workspacePath: options.workspace, registryUrl, project, ruleNames },
+        {
+          fetchRegistry: async () => registry,
+          downloadResources,
+          now: () => new Date(),
+          cliVersion: '1.0.0',
+          cleanupDownloads: true,
+        }
+      );
       stdout.write('初始化完成\n');
     });
 }
 
 /** 注册项目配置命令。 */
 function registerConfigCommand(program: Command): void {
-  program.command('config')
+  program
+    .command('config')
     .option('--workspace <path>', '目标工作区', process.cwd())
     .option('--name <name>', '项目名称')
     .option('--frameworks <names...>', '项目框架')
@@ -160,28 +189,34 @@ function registerConfigCommand(program: Command): void {
     .action(async (options: ProfileCommandOptions) => {
       const manifest = await readManifest(options.workspace);
       const registry = await fetchRegistry(manifest.registryUrl);
-      printRuleCatalog(registry);
-      const hasProfileOptions = options.name !== undefined || options.frameworks !== undefined
-        || options.architecture !== undefined || options.environments !== undefined;
+      const hasProfileOptions =
+        options.name !== undefined ||
+        options.frameworks !== undefined ||
+        options.architecture !== undefined ||
+        options.environments !== undefined;
       const project = hasProfileOptions ? await collectProjectProfile(options) : undefined;
-      const ruleNames = await requireListOption(options.rules, '--rules', 'Rules（逗号分隔，可留空）: ', true);
-      await configureProject({
-        workspacePath: options.workspace,
-        ruleNames,
-        ...(project === undefined ? {} : { project }),
-      }, {
-        fetchRegistry: async () => registry,
-        downloadResources,
-        now: () => new Date(),
-        cleanupDownloads: true,
-      });
+      const ruleNames = await collectRuleNames(options, registry, Object.keys(manifest.rules));
+      await configureProject(
+        {
+          workspacePath: options.workspace,
+          ruleNames,
+          ...(project === undefined ? {} : { project }),
+        },
+        {
+          fetchRegistry: async () => registry,
+          downloadResources,
+          now: () => new Date(),
+          cleanupDownloads: true,
+        }
+      );
       stdout.write('配置已更新\n');
     });
 }
 
 /** 注册版本更新命令。 */
 function registerUpdateCommand(program: Command): void {
-  program.command('update')
+  program
+    .command('update')
     .option('--workspace <path>', '目标工作区', process.cwd())
     .option('--yes', '无需交互确认')
     .action(async (options: { readonly workspace: string; readonly yes?: boolean }) => {
@@ -190,9 +225,11 @@ function registerUpdateCommand(program: Command): void {
       const result = await updateProject(options.workspace, {
         fetchRegistry: registryModule.fetchRegistry,
         downloadResources: downloaderModule.downloadResources,
-        confirm: async (plan) => {
+        confirm: async plan => {
           for (const update of plan.updates) {
-            stdout.write(`${update.kind}.${update.name}: ${update.localEntry.version} -> ${update.remoteEntry.version} (${update.remoteEntry.updatedAt})\n`);
+            stdout.write(
+              `${update.kind}.${update.name}: ${update.localEntry.version} -> ${update.remoteEntry.version} (${update.remoteEntry.updatedAt})\n`
+            );
           }
           return options.yes === true ? true : confirmAction('确认应用以上更新？');
         },
@@ -200,7 +237,9 @@ function registerUpdateCommand(program: Command): void {
         cleanupDownloads: true,
       });
       for (const rollback of result.rollbacks) {
-        stdout.write(`回退异常 ${rollback.kind}.${rollback.name}: 本地 ${rollback.localVersion} > 远端 ${rollback.remoteVersion}\n`);
+        stdout.write(
+          `回退异常 ${rollback.kind}.${rollback.name}: 本地 ${rollback.localVersion} > 远端 ${rollback.remoteVersion}\n`
+        );
       }
       for (const skillName of result.skippedSkills) {
         stdout.write(`跳过本地非 flow skill: ${skillName}\n`);
@@ -211,25 +250,30 @@ function registerUpdateCommand(program: Command): void {
 
 /** 注册公共资源发布命令。 */
 function registerReleaseCommand(program: Command): void {
-  program.command('release')
+  program
+    .command('release')
     .option('--workspace <path>', '公共源仓库', process.cwd())
     .action(async (options: { readonly workspace: string }) => {
       const changeModule = await import('./release/change-detector.js');
       const released = await releaseRegistry(options.workspace, {
         detectChanges: changeModule.detectWorkingResourceChanges,
-        selectReleaseType: async (resource) => selectReleaseType(`${resource.kind}.${resource.name}`),
-        describeResource: async (resource) => requireOption(undefined, `${resource.kind}.${resource.name} desc`, `${resource.kind}.${resource.name} 描述: `),
+        selectReleaseType: async resource => selectReleaseType(`${resource.kind}.${resource.name}`),
+        describeResource: async resource =>
+          requireOption(undefined, `${resource.kind}.${resource.name} desc`, `${resource.kind}.${resource.name} 描述: `),
         now: () => new Date(),
       });
-      stdout.write(released.length === 0
-        ? '没有资源变化\n'
-        : `${released.map((entry) => `${entry.kind}.${entry.name}: ${entry.previousVersion ?? '新增'} -> ${entry.nextVersion ?? '删除'}`).join('\n')}\n`);
+      stdout.write(
+        released.length === 0
+          ? '没有资源变化\n'
+          : `${released.map(entry => `${entry.kind}.${entry.name}: ${entry.previousVersion ?? '新增'} -> ${entry.nextVersion ?? '删除'}`).join('\n')}\n`
+      );
     });
 }
 
 /** 注册 registry 校验命令。 */
 function registerRegistryCheckCommand(program: Command): void {
-  program.command('registry:check')
+  program
+    .command('registry:check')
     .option('--workspace <path>', '公共源仓库', process.cwd())
     .option('--base <ref>', '合并目标 Git ref')
     .action(async (options: { readonly workspace: string; readonly base?: string }) => {
@@ -240,7 +284,8 @@ function registerRegistryCheckCommand(program: Command): void {
 
 /** 注册 issue 上传命令。 */
 function registerUploadCommand(program: Command): void {
-  program.command('upload <issue-name>')
+  program
+    .command('upload <issue-name>')
     .option('--workspace <path>', '目标工作区', process.cwd())
     .option('--remote <name>', 'Git remote', 'origin')
     .action(async (issueName: string, options: { readonly workspace: string; readonly remote: string }) => {
