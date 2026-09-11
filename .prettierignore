@@ -1,0 +1,17 @@
+# 依赖与构建产物
+node_modules/
+dist/
+pnpm-lock.yaml
+.pnpm-store/
+CHANGELOG.md
+
+# 工具维护目录（changeset 生成变更记录）
+.changeset/
+
+# 分发资源与流程文档（registry 校验要求 .agents 内容稳定，.docs 为过程证据）
+.agents/
+.docs/
+
+# 历史快照目录
+flow-v1/
+flow-v2/

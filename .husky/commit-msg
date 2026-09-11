@@ -1,0 +1,2 @@
+# 校验提交信息格式（规范见 .agents/rules/git-commit.md）
+pnpm exec commitlint --edit "$1"

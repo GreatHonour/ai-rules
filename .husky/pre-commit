@@ -1,0 +1,3 @@
+# 工程化钩子：先格式化暂存文件，再执行资源维护门禁（.githooks 为门禁的独立实现）
+pnpm exec lint-staged
+sh .githooks/pre-commit

@@ -11,9 +11,12 @@
   ],
   "scripts": {
     "agents": "tsx src/cli.ts",
-    "hooks:install": "node -e \"require('node:fs').chmodSync('.githooks/pre-commit', 0o755)\" && git config core.hooksPath .githooks",
     "build": "tsc -p tsconfig.build.json",
     "check": "tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepare": "husky",
+    "release:version": "changeset version",
     "test": "vitest run"
   },
   "engines": {
@@ -26,8 +29,15 @@
     "semver": "^7.7.2"
   },
   "devDependencies": {
+    "@changesets/changelog-git": "^1.0.0",
+    "@changesets/cli": "^3.0.2",
+    "@commitlint/cli": "^21.2.2",
+    "@commitlint/config-conventional": "^21.2.2",
     "@types/node": "^24.3.1",
     "@types/semver": "^7.5.8",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.5.1",
+    "prettier": "^3.9.6",
     "tsx": "^4.23.13",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"

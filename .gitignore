@@ -12,6 +12,9 @@ src/router/routerConfig/routerPathFiles.js
 .env.local
 .env.*.local
 
+# 本地 npm 配置（含发布令牌，禁止进版本库）
+.npmrc
+
 # Log files
 npm-debug.log*
 yarn-debug.log*

@@ -88,17 +88,19 @@ pnpm agents release
 pnpm agents registry:check
 ```
 
-安装仓库内 pre-commit Hook：
-
-```bash
-pnpm hooks:install
-```
+提交钩子由 husky 管理，`pnpm install` 时自动激活；pre-commit 先格式化暂存文件（lint-staged），再执行本门禁（门禁的独立实现保留在 `.githooks/pre-commit`）。
 
 CI 使用同一校验器与合并目标分支比较：
 
 ```bash
 pnpm agents registry:check --base <target-ref>
 ```
+
+## 版本管理与格式化
+
+- 版本号与变更记录由 Changesets 管理，流程见 [version.md](./version.md)。
+- 代码风格由 Prettier 统一（配置见 `.prettierrc.cjs`）：`pnpm format` 全仓库格式化，`pnpm format:check` 只读检查。
+- 提交信息格式由 commitlint 在 commit-msg 阶段校验，type 列表见 `.agents/rules/git-commit.md`。
 
 ## 目录职责
 
