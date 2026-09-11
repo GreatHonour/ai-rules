@@ -20,13 +20,17 @@ async function createGitFixture(): Promise<{ readonly workspacePath: string; rea
   await executeFile('git', ['init'], { cwd: workspacePath });
   await writeFile(join(workspacePath, 'business.txt'), 'base', 'utf8');
   await executeFile('git', ['add', '.'], { cwd: workspacePath });
-  await executeFile('git', ['-c', 'user.name=Test', '-c', 'user.email=test@example.com', 'commit', '-m', 'base'], { cwd: workspacePath });
+  await executeFile('git', ['-c', 'user.name=Test', '-c', 'user.email=test@example.com', 'commit', '-m', 'base'], {
+    cwd: workspacePath,
+  });
   await executeFile('git', ['remote', 'add', 'origin', remotePath], { cwd: workspacePath });
   return { workspacePath, remotePath };
 }
 
 afterEach(async () => {
-  await Promise.all(temporaryDirectories.splice(0).map(async (directoryPath) => rm(directoryPath, { recursive: true, force: true })));
+  await Promise.all(
+    temporaryDirectories.splice(0).map(async directoryPath => rm(directoryPath, { recursive: true, force: true }))
+  );
 });
 
 describe('uploadIssues', () => {
@@ -42,10 +46,18 @@ describe('uploadIssues', () => {
     const result = await uploadIssues(fixture.workspacePath, 'Bug report', 'origin');
 
     expect(result.branchName).toBe('codex/issue-bug-report');
-    expect((await executeFile('git', ['branch', '--show-current'], { cwd: fixture.workspacePath })).stdout.trim()).toBe(branchBefore);
-    expect((await executeFile('git', ['diff', '--cached', '--name-only'], { cwd: fixture.workspacePath })).stdout).toBe(stagedBefore);
-    const remoteCommit = (await executeFile('git', ['rev-parse', 'refs/heads/codex/issue-bug-report'], { cwd: fixture.remotePath })).stdout.trim();
-    const changedPaths = (await executeFile('git', ['diff-tree', '--no-commit-id', '--name-only', '-r', remoteCommit], { cwd: fixture.remotePath })).stdout.trim();
+    expect((await executeFile('git', ['branch', '--show-current'], { cwd: fixture.workspacePath })).stdout.trim()).toBe(
+      branchBefore
+    );
+    expect((await executeFile('git', ['diff', '--cached', '--name-only'], { cwd: fixture.workspacePath })).stdout).toBe(
+      stagedBefore
+    );
+    const remoteCommit = (
+      await executeFile('git', ['rev-parse', 'refs/heads/codex/issue-bug-report'], { cwd: fixture.remotePath })
+    ).stdout.trim();
+    const changedPaths = (
+      await executeFile('git', ['diff-tree', '--no-commit-id', '--name-only', '-r', remoteCommit], { cwd: fixture.remotePath })
+    ).stdout.trim();
     expect(changedPaths).toBe('.agents/issues/bug.md');
     await expect(readFile(join(fixture.workspacePath, 'business.txt'), 'utf8')).resolves.toBe('staged business change');
   });

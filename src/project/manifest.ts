@@ -42,19 +42,23 @@ function validateManagedSkillEntry(value: unknown, fieldPath: string): ManagedSk
 /** 校验资源名称到资源条目的映射。 */
 function validateResourceMap(value: unknown, fieldPath: string): Readonly<Record<string, ResourceEntry>> {
   const source = requireRecord(value, fieldPath);
-  return Object.fromEntries(Object.entries(source).map(([resourceName, entry]) => [
-    requireResourceName(resourceName, `${fieldPath}.${resourceName}`),
-    validateResourceEntry(entry, `${fieldPath}.${resourceName}`),
-  ]));
+  return Object.fromEntries(
+    Object.entries(source).map(([resourceName, entry]) => [
+      requireResourceName(resourceName, `${fieldPath}.${resourceName}`),
+      validateResourceEntry(entry, `${fieldPath}.${resourceName}`),
+    ])
+  );
 }
 
 /** 校验受管 skill 映射。 */
 function validateSkillMap(value: unknown, fieldPath: string): Readonly<Record<string, ManagedSkillEntry>> {
   const source = requireRecord(value, fieldPath);
-  return Object.fromEntries(Object.entries(source).map(([resourceName, entry]) => [
-    requireResourceName(resourceName, `${fieldPath}.${resourceName}`),
-    validateManagedSkillEntry(entry, `${fieldPath}.${resourceName}`),
-  ]));
+  return Object.fromEntries(
+    Object.entries(source).map(([resourceName, entry]) => [
+      requireResourceName(resourceName, `${fieldPath}.${resourceName}`),
+      validateManagedSkillEntry(entry, `${fieldPath}.${resourceName}`),
+    ])
+  );
 }
 
 /** 校验项目画像。 */
@@ -75,7 +79,7 @@ export function validateManifest(value: unknown): Manifest {
   requireExactKeys(
     manifest,
     ['schemaVersion', 'project', 'registryUrl', 'repositoryUrl', 'rules', 'skills', 'cliVersion', 'updatedAt'],
-    'manifest',
+    'manifest'
   );
   if (manifest.schemaVersion !== 1) {
     throw new Error('manifest.schemaVersion 必须为 1');

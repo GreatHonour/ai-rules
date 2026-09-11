@@ -29,9 +29,7 @@ export interface DownloadedBatch {
 /** 根据资源类型和安全名称推导公共仓库内路径。 */
 export function createResourcePath(kind: ResourceKind, name: string): string {
   const resourceName = requireResourceName(name, `${kind}.${name}`);
-  return kind === 'rules'
-    ? join('.agents', 'rules', `${resourceName}.md`)
-    : join('.agents', 'skills', resourceName);
+  return kind === 'rules' ? join('.agents', 'rules', `${resourceName}.md`) : join('.agents', 'skills', resourceName);
 }
 
 /** 判断子路径是否仍位于给定根目录内。 */
@@ -59,7 +57,7 @@ export async function assertNoSymbolicLinks(resourcePath: string): Promise<void>
     }
     if (pathMetadata.isDirectory()) {
       const childNames = await readdir(currentPath);
-      pendingPaths.push(...childNames.map((childName) => join(currentPath, childName)));
+      pendingPaths.push(...childNames.map(childName => join(currentPath, childName)));
     }
   }
 }
@@ -82,7 +80,7 @@ async function cloneRepository(repositoryUrl: string, clonePath: string): Promis
 async function copyResource(
   request: ResourceDownloadRequest,
   clonePath: string,
-  outputPath: string,
+  outputPath: string
 ): Promise<DownloadedResource> {
   const resourcePath = createResourcePath(request.kind, request.name);
   const sourcePath = join(clonePath, resourcePath);
@@ -101,7 +99,7 @@ async function copyResource(
   await assertNoSymbolicLinks(sourcePath);
   await cp(sourcePath, outputPath, {
     recursive: sourceMetadata.isDirectory(),
-    filter: (copiedPath) => basename(copiedPath) !== '.git',
+    filter: copiedPath => basename(copiedPath) !== '.git',
   });
   return { kind: request.kind, name: request.name, sourcePath: outputPath };
 }

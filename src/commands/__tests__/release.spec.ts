@@ -19,26 +19,34 @@ async function createRepository(): Promise<string> {
   await mkdir(join(workspacePath, '.agents', 'rules'), { recursive: true });
   await mkdir(join(workspacePath, '.agents', 'skills'), { recursive: true });
   await writeFile(join(workspacePath, '.agents', 'rules', 'typescript.md'), 'base', 'utf8');
-  await writeFile(join(workspacePath, 'registry.json'), JSON.stringify({
-    repositoryUrl: 'https://example.com/repo.git',
-    rules: {
-      typescript: {
-        version: '1.0.0',
-        desc: 'TypeScript 规则',
-        updatedAt: '2026-09-10 08:00:00',
+  await writeFile(
+    join(workspacePath, 'registry.json'),
+    JSON.stringify({
+      repositoryUrl: 'https://example.com/repo.git',
+      rules: {
+        typescript: {
+          version: '1.0.0',
+          desc: 'TypeScript 规则',
+          updatedAt: '2026-09-10 08:00:00',
+        },
       },
-    },
-    skills: {},
-  }), 'utf8');
+      skills: {},
+    }),
+    'utf8'
+  );
   await executeFile('git', ['init'], { cwd: workspacePath });
   await executeFile('git', ['remote', 'add', 'origin', 'https://example.com/repo.git'], { cwd: workspacePath });
   await executeFile('git', ['add', '.'], { cwd: workspacePath });
-  await executeFile('git', ['-c', 'user.name=Test', '-c', 'user.email=test@example.com', 'commit', '-m', 'base'], { cwd: workspacePath });
+  await executeFile('git', ['-c', 'user.name=Test', '-c', 'user.email=test@example.com', 'commit', '-m', 'base'], {
+    cwd: workspacePath,
+  });
   return workspacePath;
 }
 
 afterEach(async () => {
-  await Promise.all(temporaryDirectories.splice(0).map(async (directoryPath) => rm(directoryPath, { recursive: true, force: true })));
+  await Promise.all(
+    temporaryDirectories.splice(0).map(async directoryPath => rm(directoryPath, { recursive: true, force: true }))
+  );
 });
 
 describe('releaseRegistry', () => {
@@ -64,7 +72,11 @@ describe('releaseRegistry', () => {
     temporaryDirectories.push(workspacePath);
     await executeFile('git', ['init'], { cwd: workspacePath });
     await executeFile('git', ['remote', 'add', 'origin', 'https://example.com/repo.git'], { cwd: workspacePath });
-    await writeFile(join(workspacePath, 'registry.json'), JSON.stringify({ repositoryUrl: 'https://example.com/repo.git', rules: {}, skills: {} }), 'utf8');
+    await writeFile(
+      join(workspacePath, 'registry.json'),
+      JSON.stringify({ repositoryUrl: 'https://example.com/repo.git', rules: {}, skills: {} }),
+      'utf8'
+    );
 
     await expect(releaseRegistry(workspacePath)).rejects.toThrow();
   });

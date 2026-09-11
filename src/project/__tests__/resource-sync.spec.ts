@@ -16,7 +16,9 @@ async function createWorkspace(): Promise<string> {
 }
 
 afterEach(async () => {
-  await Promise.all(temporaryDirectories.splice(0).map(async (directoryPath) => rm(directoryPath, { recursive: true, force: true })));
+  await Promise.all(
+    temporaryDirectories.splice(0).map(async directoryPath => rm(directoryPath, { recursive: true, force: true }))
+  );
 });
 
 describe('syncResources', () => {
@@ -45,7 +47,9 @@ describe('syncResources', () => {
     await writeFile(join(workspacePath, '.agents', 'skills', 'custom', 'value.md'), 'local', 'utf8');
     await writeFile(join(sourceRoot, 'custom', 'value.md'), 'remote', 'utf8');
 
-    const result = await syncResources(workspacePath, [{ kind: 'skills', name: 'custom', sourcePath: join(sourceRoot, 'custom') }]);
+    const result = await syncResources(workspacePath, [
+      { kind: 'skills', name: 'custom', sourcePath: join(sourceRoot, 'custom') },
+    ]);
 
     expect(result.skippedSkills).toEqual(['custom']);
     await expect(readFile(join(workspacePath, '.agents', 'skills', 'custom', 'value.md'), 'utf8')).resolves.toBe('local');
@@ -59,9 +63,13 @@ describe('syncResources', () => {
     await writeFile(join(workspacePath, '.agents', 'skills', 'flow-test', 'value.md'), 'old', 'utf8');
     await writeFile(join(sourceRoot, 'flow-test', 'value.md'), 'new', 'utf8');
 
-    await expect(syncResources(workspacePath, [
-      { kind: 'skills', name: 'flow-test', sourcePath: join(sourceRoot, 'flow-test') },
-    ], { afterSwap: async () => { throw new Error('模拟后续写入失败'); } })).rejects.toThrow('模拟后续写入失败');
+    await expect(
+      syncResources(workspacePath, [{ kind: 'skills', name: 'flow-test', sourcePath: join(sourceRoot, 'flow-test') }], {
+        afterSwap: async () => {
+          throw new Error('模拟后续写入失败');
+        },
+      })
+    ).rejects.toThrow('模拟后续写入失败');
 
     await expect(readFile(join(workspacePath, '.agents', 'skills', 'flow-test', 'value.md'), 'utf8')).resolves.toBe('old');
   });
@@ -71,9 +79,11 @@ describe('syncResources', () => {
     const protectedPath = join(workspacePath, 'protected.md');
     await writeFile(protectedPath, 'protected', 'utf8');
 
-    await expect(syncResources(workspacePath, [], {
-      removedRuleNames: ['../../protected'],
-    })).rejects.toThrow('字母、数字和连字符');
+    await expect(
+      syncResources(workspacePath, [], {
+        removedRuleNames: ['../../protected'],
+      })
+    ).rejects.toThrow('字母、数字和连字符');
 
     await expect(readFile(protectedPath, 'utf8')).resolves.toBe('protected');
   });

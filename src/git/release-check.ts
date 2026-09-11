@@ -14,7 +14,7 @@ function getEntry(registry: Registry, resource: ChangedResource): ResourceEntry 
 export function validateRegistryChanges(
   changedResources: readonly ChangedResource[],
   baseRegistry: Registry,
-  nextRegistry: Registry,
+  nextRegistry: Registry
 ): readonly string[] {
   const errors: string[] = [];
   for (const kind of ['rules', 'skills'] as const) {
@@ -74,15 +74,18 @@ async function readGitRegistry(workspacePath: string, revisionPath: string): Pro
 
 /** 执行暂存区或目标分支的只读 registry 门禁。 */
 export async function runRegistryCheck(workspacePath: string, baseReference?: string): Promise<void> {
-  const changedResources = baseReference === undefined
-    ? await detectStagedResourceChanges(workspacePath)
-    : await detectBranchResourceChanges(workspacePath, baseReference);
-  const baseRegistry = baseReference === undefined
-    ? await readGitRegistry(workspacePath, 'HEAD:registry.json')
-    : await readGitRegistry(workspacePath, `${baseReference}:registry.json`);
-  const nextRegistry = baseReference === undefined
-    ? validateRegistry(JSON.parse(await readFileFromIndex(workspacePath)) as unknown)
-    : await readGitRegistry(workspacePath, 'HEAD:registry.json');
+  const changedResources =
+    baseReference === undefined
+      ? await detectStagedResourceChanges(workspacePath)
+      : await detectBranchResourceChanges(workspacePath, baseReference);
+  const baseRegistry =
+    baseReference === undefined
+      ? await readGitRegistry(workspacePath, 'HEAD:registry.json')
+      : await readGitRegistry(workspacePath, `${baseReference}:registry.json`);
+  const nextRegistry =
+    baseReference === undefined
+      ? validateRegistry(JSON.parse(await readFileFromIndex(workspacePath)) as unknown)
+      : await readGitRegistry(workspacePath, 'HEAD:registry.json');
   const errors = validateRegistryChanges(changedResources, baseRegistry, nextRegistry);
   if (errors.length > 0) {
     throw new Error(`${errors.join('\n')}\n请运行 pnpm agents release`);

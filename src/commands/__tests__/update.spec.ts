@@ -31,7 +31,9 @@ const MANIFEST: Manifest = {
 };
 
 afterEach(async () => {
-  await Promise.all(temporaryDirectories.splice(0).map(async (directoryPath) => rm(directoryPath, { recursive: true, force: true })));
+  await Promise.all(
+    temporaryDirectories.splice(0).map(async directoryPath => rm(directoryPath, { recursive: true, force: true }))
+  );
 });
 
 describe('planUpdates', () => {
@@ -47,7 +49,7 @@ describe('planUpdates', () => {
 
     const plan = planUpdates(MANIFEST, registry);
 
-    expect(plan.updates.map((entry) => entry.name)).toEqual(['typescript', 'flow-test']);
+    expect(plan.updates.map(entry => entry.name)).toEqual(['typescript', 'flow-test']);
     expect(plan.skippedSkills).toEqual(['custom']);
     expect(plan.rollbacks).toEqual([]);
   });
@@ -69,7 +71,9 @@ describe('planUpdates', () => {
   });
 
   it('远端缺少 manifest 资源时报告错误', () => {
-    expect(() => planUpdates(MANIFEST, { repositoryUrl: 'https://example.com/rules.git', rules: {}, skills: {} })).toThrow('typescript');
+    expect(() => planUpdates(MANIFEST, { repositoryUrl: 'https://example.com/rules.git', rules: {}, skills: {} })).toThrow(
+      'typescript'
+    );
   });
 });
 
@@ -119,7 +123,9 @@ describe('updateProject', () => {
         rules: { typescript: { ...LOCAL_ENTRY, version: '1.1.0' } },
         skills: {},
       }),
-      downloadResources: async () => { throw new Error('不应下载'); },
+      downloadResources: async () => {
+        throw new Error('不应下载');
+      },
       confirm: async () => false,
       now: () => new Date('2026-09-11T09:00:00.000Z'),
       cleanupDownloads: false,

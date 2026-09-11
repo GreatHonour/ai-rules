@@ -5,7 +5,7 @@ import { uploadIssues } from '../git/issue-uploader.js';
 export async function uploadProjectIssues(
   workspacePath: string,
   issueName: string,
-  remoteName = 'origin',
+  remoteName = 'origin'
 ): Promise<IssueUploadResult> {
   return uploadIssues(workspacePath, issueName, remoteName);
 }

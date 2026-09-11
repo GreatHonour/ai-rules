@@ -20,12 +20,16 @@ async function createRepository(): Promise<string> {
   await writeFile(join(workspacePath, '.agents', 'skills', 'flow-test', 'keep.md'), 'keep', 'utf8');
   await executeFile('git', ['init'], { cwd: workspacePath });
   await executeFile('git', ['add', '.'], { cwd: workspacePath });
-  await executeFile('git', ['-c', 'user.name=Test', '-c', 'user.email=test@example.com', 'commit', '-m', 'base'], { cwd: workspacePath });
+  await executeFile('git', ['-c', 'user.name=Test', '-c', 'user.email=test@example.com', 'commit', '-m', 'base'], {
+    cwd: workspacePath,
+  });
   return workspacePath;
 }
 
 afterEach(async () => {
-  await Promise.all(temporaryDirectories.splice(0).map(async (directoryPath) => rm(directoryPath, { recursive: true, force: true })));
+  await Promise.all(
+    temporaryDirectories.splice(0).map(async directoryPath => rm(directoryPath, { recursive: true, force: true }))
+  );
 });
 
 describe('detectWorkingResourceChanges', () => {

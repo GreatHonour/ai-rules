@@ -21,12 +21,16 @@ async function createResourceRepository(): Promise<string> {
   await writeFile(join(repositoryPath, '.agents', 'skills', 'flow-test', 'SKILL.md'), '# Flow test\n', 'utf8');
   await executeFile('git', ['init'], { cwd: repositoryPath });
   await executeFile('git', ['add', '.'], { cwd: repositoryPath });
-  await executeFile('git', ['-c', 'user.name=Test', '-c', 'user.email=test@example.com', 'commit', '-m', 'init'], { cwd: repositoryPath });
+  await executeFile('git', ['-c', 'user.name=Test', '-c', 'user.email=test@example.com', 'commit', '-m', 'init'], {
+    cwd: repositoryPath,
+  });
   return `file:///${repositoryPath.replaceAll('\\', '/')}`;
 }
 
 afterEach(async () => {
-  await Promise.all(temporaryDirectories.splice(0).map(async (directoryPath) => rm(directoryPath, { recursive: true, force: true })));
+  await Promise.all(
+    temporaryDirectories.splice(0).map(async directoryPath => rm(directoryPath, { recursive: true, force: true }))
+  );
 });
 
 describe('createResourcePath', () => {
@@ -46,17 +50,21 @@ describe('downloadResources', () => {
     ]);
     temporaryDirectories.push(downloadedBatch.temporaryRoot);
     await expect(readFile(downloadedBatch.resources[0]?.sourcePath ?? '', 'utf8')).resolves.toContain('TypeScript');
-    await expect(readFile(join(downloadedBatch.resources[1]?.sourcePath ?? '', 'SKILL.md'), 'utf8')).resolves.toContain('Flow test');
+    await expect(readFile(join(downloadedBatch.resources[1]?.sourcePath ?? '', 'SKILL.md'), 'utf8')).resolves.toContain(
+      'Flow test'
+    );
     await expect(readFile(join(downloadedBatch.resources[1]?.sourcePath ?? '', '.git'), 'utf8')).rejects.toThrow();
     await expect(stat(join(downloadedBatch.temporaryRoot, 'clone-1'))).rejects.toThrow();
   });
 
   it('批量下载任一项失败时清理临时目录', async () => {
     const repositoryUrl = await createResourceRepository();
-    await expect(downloadResources([
-      { kind: 'rules', name: 'typescript', repositoryUrl },
-      { kind: 'rules', name: 'missing', repositoryUrl },
-    ])).rejects.toThrow('missing');
+    await expect(
+      downloadResources([
+        { kind: 'rules', name: 'typescript', repositoryUrl },
+        { kind: 'rules', name: 'missing', repositoryUrl },
+      ])
+    ).rejects.toThrow('missing');
   });
 
   it('拒绝通过符号链接逃逸的 skill', async () => {

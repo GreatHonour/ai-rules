@@ -34,7 +34,7 @@ async function pathExists(filePath: string): Promise<boolean> {
 async function applyResources(
   stagedAgentsPath: string,
   resources: readonly DownloadedResource[],
-  removedRuleNames: readonly string[],
+  removedRuleNames: readonly string[]
 ): Promise<readonly string[]> {
   await mkdir(join(stagedAgentsPath, 'rules'), { recursive: true });
   await mkdir(join(stagedAgentsPath, 'skills'), { recursive: true });
@@ -46,10 +46,11 @@ async function applyResources(
   const skippedSkills: string[] = [];
   for (const resource of resources) {
     const safeResourceName = requireResourceName(resource.name, `${resource.kind}.${resource.name}`);
-    const targetPath = resource.kind === 'rules'
-      ? join(stagedAgentsPath, 'rules', `${safeResourceName}.md`)
-      : join(stagedAgentsPath, 'skills', safeResourceName);
-    if (resource.kind === 'skills' && !safeResourceName.startsWith('flow-') && await pathExists(targetPath)) {
+    const targetPath =
+      resource.kind === 'rules'
+        ? join(stagedAgentsPath, 'rules', `${safeResourceName}.md`)
+        : join(stagedAgentsPath, 'skills', safeResourceName);
+    if (resource.kind === 'skills' && !safeResourceName.startsWith('flow-') && (await pathExists(targetPath))) {
       skippedSkills.push(safeResourceName);
       continue;
     }
@@ -63,7 +64,7 @@ async function applyResources(
 export async function syncResources(
   workspacePath: string,
   resources: readonly DownloadedResource[],
-  options: ResourceSyncOptions = {},
+  options: ResourceSyncOptions = {}
 ): Promise<ResourceSyncResult> {
   const agentsPath = join(workspacePath, '.agents');
   const operationId = randomUUID();

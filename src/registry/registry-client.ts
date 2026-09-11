@@ -26,7 +26,7 @@ function validateResourceMap(value: unknown, fieldPath: string): Readonly<Record
     Object.entries(source).map(([resourceName, entry]) => [
       requireResourceName(resourceName, `${fieldPath}.${resourceName}`),
       validateResourceEntry(entry, `${fieldPath}.${resourceName}`),
-    ]),
+    ])
   );
 }
 

@@ -25,15 +25,16 @@ export interface ReleasedResource extends ChangedResource {
 const DEFAULT_DEPENDENCIES: ReleaseDependencies = {
   detectChanges: detectWorkingResourceChanges,
   selectReleaseType: async () => 'patch',
-  describeResource: async (resource) => `${resource.kind}.${resource.name}`,
+  describeResource: async resource => `${resource.kind}.${resource.name}`,
   now: () => new Date(),
 };
 
 /** 判断公共源资源当前是否存在。 */
 async function resourceExists(workspacePath: string, resource: ChangedResource): Promise<boolean> {
-  const resourcePath = resource.kind === 'rules'
-    ? join(workspacePath, '.agents', 'rules', `${resource.name}.md`)
-    : join(workspacePath, '.agents', 'skills', resource.name);
+  const resourcePath =
+    resource.kind === 'rules'
+      ? join(workspacePath, '.agents', 'rules', `${resource.name}.md`)
+      : join(workspacePath, '.agents', 'skills', resource.name);
   try {
     await stat(resourcePath);
     return true;
@@ -70,7 +71,7 @@ async function assertPublicSourceRepository(workspacePath: string): Promise<void
 /** 根据工作树资源变化生成 registry 版本更新，不执行 Git 写操作。 */
 export async function releaseRegistry(
   workspacePath: string,
-  dependencies: ReleaseDependencies = DEFAULT_DEPENDENCIES,
+  dependencies: ReleaseDependencies = DEFAULT_DEPENDENCIES
 ): Promise<readonly ReleasedResource[]> {
   await assertPublicSourceRepository(workspacePath);
   const registry = await readWorkingRegistry(workspacePath);
@@ -84,11 +85,9 @@ export async function releaseRegistry(
   for (const resource of changes) {
     const resourceMap = resource.kind === 'rules' ? mutableRules : mutableSkills;
     const currentEntry = resourceMap[resource.name];
-    if (!await resourceExists(workspacePath, resource)) {
+    if (!(await resourceExists(workspacePath, resource))) {
       delete resourceMap[resource.name];
-      releasedResources.push(currentEntry === undefined
-        ? resource
-        : { ...resource, previousVersion: currentEntry.version });
+      releasedResources.push(currentEntry === undefined ? resource : { ...resource, previousVersion: currentEntry.version });
       continue;
     }
     if (currentEntry === undefined) {

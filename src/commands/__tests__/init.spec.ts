@@ -44,7 +44,9 @@ async function createFixture(): Promise<{ readonly workspacePath: string; readon
 }
 
 afterEach(async () => {
-  await Promise.all(temporaryDirectories.splice(0).map(async (directoryPath) => rm(directoryPath, { recursive: true, force: true })));
+  await Promise.all(
+    temporaryDirectories.splice(0).map(async directoryPath => rm(directoryPath, { recursive: true, force: true }))
+  );
 });
 
 describe('initializeProject', () => {
@@ -55,28 +57,35 @@ describe('initializeProject', () => {
     await writeFile(join(fixture.workspacePath, '.git', 'sentinel'), 'unchanged', 'utf8');
     await writeFile(join(fixture.workspacePath, '.agents', 'skills', 'local-skill', 'SKILL.md'), 'local', 'utf8');
 
-    await initializeProject({
-      workspacePath: fixture.workspacePath,
-      registryUrl: 'https://example.com/registry.json',
-      project: { name: 'demo', frameworks: ['vue3'], architecture: 'spa', environments: ['PC'] },
-      ruleNames: ['typescript'],
-    }, {
-      fetchRegistry: async () => REGISTRY,
-      downloadResources: async () => ({
-        temporaryRoot: fixture.resourceRoot,
-        resources: [
-          { kind: 'rules', name: 'typescript', sourcePath: join(fixture.resourceRoot, 'typescript.md') },
-          { kind: 'skills', name: 'flow-test', sourcePath: join(fixture.resourceRoot, 'flow-test') },
-        ],
-      }),
-      now: () => new Date('2026-09-11T09:00:00.000Z'),
-      cliVersion: '1.0.0',
-      cleanupDownloads: false,
-    });
+    await initializeProject(
+      {
+        workspacePath: fixture.workspacePath,
+        registryUrl: 'https://example.com/registry.json',
+        project: { name: 'demo', frameworks: ['vue3'], architecture: 'spa', environments: ['PC'] },
+        ruleNames: ['typescript'],
+      },
+      {
+        fetchRegistry: async () => REGISTRY,
+        downloadResources: async () => ({
+          temporaryRoot: fixture.resourceRoot,
+          resources: [
+            { kind: 'rules', name: 'typescript', sourcePath: join(fixture.resourceRoot, 'typescript.md') },
+            { kind: 'skills', name: 'flow-test', sourcePath: join(fixture.resourceRoot, 'flow-test') },
+          ],
+        }),
+        now: () => new Date('2026-09-11T09:00:00.000Z'),
+        cliVersion: '1.0.0',
+        cleanupDownloads: false,
+      }
+    );
 
     await expect(readFile(join(fixture.workspacePath, '.git', 'sentinel'), 'utf8')).resolves.toBe('unchanged');
-    await expect(readFile(join(fixture.workspacePath, '.agents', 'skills', 'local-skill', 'SKILL.md'), 'utf8')).resolves.toBe('local');
-    await expect(readFile(join(fixture.workspacePath, '.agents', 'skills', 'flow-test', 'SKILL.md'), 'utf8')).resolves.toBe('# Skill');
+    await expect(readFile(join(fixture.workspacePath, '.agents', 'skills', 'local-skill', 'SKILL.md'), 'utf8')).resolves.toBe(
+      'local'
+    );
+    await expect(readFile(join(fixture.workspacePath, '.agents', 'skills', 'flow-test', 'SKILL.md'), 'utf8')).resolves.toBe(
+      '# Skill'
+    );
     const manifestText = await readFile(join(fixture.workspacePath, '.agents', 'manifest.json'), 'utf8');
     expect(manifestText).toContain('"flow-test"');
     expect(manifestText).not.toContain('"personal"');
@@ -86,18 +95,25 @@ describe('initializeProject', () => {
   it('拒绝 registry 中不存在的 rule 且不创建 .agents', async () => {
     const fixture = await createFixture();
 
-    await expect(initializeProject({
-      workspacePath: fixture.workspacePath,
-      registryUrl: 'https://example.com/registry.json',
-      project: { name: 'demo', frameworks: [], architecture: 'cli', environments: ['PC'] },
-      ruleNames: ['missing'],
-    }, {
-      fetchRegistry: async () => REGISTRY,
-      downloadResources: async () => { throw new Error('不应下载'); },
-      now: () => new Date('2026-09-11T09:00:00.000Z'),
-      cliVersion: '1.0.0',
-      cleanupDownloads: false,
-    })).rejects.toThrow('missing');
+    await expect(
+      initializeProject(
+        {
+          workspacePath: fixture.workspacePath,
+          registryUrl: 'https://example.com/registry.json',
+          project: { name: 'demo', frameworks: [], architecture: 'cli', environments: ['PC'] },
+          ruleNames: ['missing'],
+        },
+        {
+          fetchRegistry: async () => REGISTRY,
+          downloadResources: async () => {
+            throw new Error('不应下载');
+          },
+          now: () => new Date('2026-09-11T09:00:00.000Z'),
+          cliVersion: '1.0.0',
+          cleanupDownloads: false,
+        }
+      )
+    ).rejects.toThrow('missing');
     await expect(readFile(join(fixture.workspacePath, '.agents', 'manifest.json'), 'utf8')).rejects.toThrow();
   });
 });

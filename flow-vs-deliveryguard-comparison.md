@@ -47,18 +47,18 @@ DeliveryGuard 的 OpenSpec 可以作为 `flow-plans` 和 `flow-implement` 的交
 
 ## 三、阶段能力映射
 
-| 阶段 | `flow-*` 能力 | DeliveryGuard 对应能力 | 差异 |
-| --- | --- | --- | --- |
-| 需求分析 | `flow-brainstorm`：业务闭环、方案比较、边界确认 | `openspec-explore`：问题、约束、风险探索 | `flow` 更强调业务决策，DeliveryGuard 更强调交付事实 |
-| 技术规划 | `flow-plans`：生成 `design.md`、`task.md` | `openspec-propose`：生成 proposal、tasks | DeliveryGuard 额外绑定版本、文档和仓库 |
-| 计划审查 | `flow-plan-review`：决策 → 设计 → 任务追踪和场景反证 | 没有同等强度的计划审查 | 这是 DeliveryGuard 的缺口 |
-| 实现 | `flow-implement`：依赖调度、TDD、增量验证 | `openspec-apply`：实施并登记源码事实 | `flow` 更细化执行调度，DeliveryGuard 更关注提交事实 |
-| 代码审查 | `flow-review`：分级问题、用户确认、修复验证 | 没有直接对应 skill | DeliveryGuard 的验收不能替代代码审查 |
-| E2E | `flow-e2e`：真实浏览器、能力预检、场景报告 | `acceptance`、`real-device-test` 及专项验证 skill | `flow` 更偏执行协议，DeliveryGuard 更偏证据和结论合法性 |
-| 验收 | `flow-e2e` 验证集成场景 | `acceptance`：文档 → 需求 → 用例 → 证据 | DeliveryGuard 有完整覆盖模型 |
-| 缺陷修复 | `flow-bugfix`：`fix.md`、修复、验证 | `request-diagnosis` + `repair` | DeliveryGuard 强制首个失败边界和 red/green/regression |
-| 归档 | `flow-archive`：`log.md`、`retro.md`、清理、Git commit | `openspec-archive`、handoff、knowledge-capture | `flow` 偏过程收口，DeliveryGuard 偏事实收口 |
-| 发布 | 没有独立发布状态 | `release`：生产部署、部署锚点、发布时间 | 这是 `flow` 最大缺口 |
+| 阶段     | `flow-*` 能力                                          | DeliveryGuard 对应能力                            | 差异                                                    |
+| -------- | ------------------------------------------------------ | ------------------------------------------------- | ------------------------------------------------------- |
+| 需求分析 | `flow-brainstorm`：业务闭环、方案比较、边界确认        | `openspec-explore`：问题、约束、风险探索          | `flow` 更强调业务决策，DeliveryGuard 更强调交付事实     |
+| 技术规划 | `flow-plans`：生成 `design.md`、`task.md`              | `openspec-propose`：生成 proposal、tasks          | DeliveryGuard 额外绑定版本、文档和仓库                  |
+| 计划审查 | `flow-plan-review`：决策 → 设计 → 任务追踪和场景反证   | 没有同等强度的计划审查                            | 这是 DeliveryGuard 的缺口                               |
+| 实现     | `flow-implement`：依赖调度、TDD、增量验证              | `openspec-apply`：实施并登记源码事实              | `flow` 更细化执行调度，DeliveryGuard 更关注提交事实     |
+| 代码审查 | `flow-review`：分级问题、用户确认、修复验证            | 没有直接对应 skill                                | DeliveryGuard 的验收不能替代代码审查                    |
+| E2E      | `flow-e2e`：真实浏览器、能力预检、场景报告             | `acceptance`、`real-device-test` 及专项验证 skill | `flow` 更偏执行协议，DeliveryGuard 更偏证据和结论合法性 |
+| 验收     | `flow-e2e` 验证集成场景                                | `acceptance`：文档 → 需求 → 用例 → 证据           | DeliveryGuard 有完整覆盖模型                            |
+| 缺陷修复 | `flow-bugfix`：`fix.md`、修复、验证                    | `request-diagnosis` + `repair`                    | DeliveryGuard 强制首个失败边界和 red/green/regression   |
+| 归档     | `flow-archive`：`log.md`、`retro.md`、清理、Git commit | `openspec-archive`、handoff、knowledge-capture    | `flow` 偏过程收口，DeliveryGuard 偏事实收口             |
+| 发布     | 没有独立发布状态                                       | `release`：生产部署、部署锚点、发布时间           | 这是 `flow` 最大缺口                                    |
 
 ## 四、`flow-*` 已经较强的部分
 
@@ -141,7 +141,7 @@ manifest.json
 
 ```markdown
 | 文档 | 需求 | 用例 | 状态 | 证据 | 备注 |
-| --- | --- | --- | --- | --- | --- |
+| ---- | ---- | ---- | ---- | ---- | ---- |
 ```
 
 统一状态：
@@ -360,4 +360,3 @@ flow-archive
 - `D:\delivery-harness\.agents\skills\` 下全部 19 个 `SKILL.md`
 - `D:\delivery-harness\src\status.ts`
 - `D:\delivery-harness\src\validate.ts`
-

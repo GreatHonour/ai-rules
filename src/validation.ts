@@ -17,10 +17,10 @@ export function requireRecord(value: unknown, fieldPath: string): Record<string,
 export function requireExactKeys(
   source: Readonly<Record<string, unknown>>,
   allowedKeys: readonly string[],
-  fieldPath: string,
+  fieldPath: string
 ): void {
   const allowedKeySet = new Set(allowedKeys);
-  const unexpectedKey = Object.keys(source).find((key) => !allowedKeySet.has(key));
+  const unexpectedKey = Object.keys(source).find(key => !allowedKeySet.has(key));
   if (unexpectedKey !== undefined) {
     throw new Error(`${fieldPath}.${unexpectedKey} 是未允许的字段`);
   }
@@ -57,7 +57,7 @@ export function requireUtcDateTime(value: unknown, fieldPath: string): string {
   const dateMatch = /^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})$/.exec(dateText);
   const dateParts = dateMatch?.slice(1).map(Number);
   const [year, month, day, hour, minute, second] = dateParts ?? [];
-  const hasAllParts = [year, month, day, hour, minute, second].every((part) => part !== undefined);
+  const hasAllParts = [year, month, day, hour, minute, second].every(part => part !== undefined);
   const normalizedDate = hasAllParts
     ? formatUtcDate(new Date(Date.UTC(year ?? 0, (month ?? 1) - 1, day ?? 1, hour ?? 0, minute ?? 0, second ?? 0)))
     : '';

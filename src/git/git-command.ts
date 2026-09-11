@@ -11,7 +11,7 @@ export interface GitCommandOptions {
 export async function runGit(
   workspacePath: string,
   argumentsList: readonly string[],
-  options: GitCommandOptions = {},
+  options: GitCommandOptions = {}
 ): Promise<string> {
   try {
     const execution = await executeFile('git', argumentsList, {
@@ -23,9 +23,8 @@ export async function runGit(
     return execution.stdout;
   } catch (error: unknown) {
     const stderr = error instanceof Error && 'stderr' in error ? Reflect.get(error, 'stderr') : undefined;
-    const message = typeof stderr === 'string' && stderr.trim() !== ''
-      ? stderr.trim()
-      : error instanceof Error ? error.message : String(error);
+    const message =
+      typeof stderr === 'string' && stderr.trim() !== '' ? stderr.trim() : error instanceof Error ? error.message : String(error);
     throw new Error(`Git 命令失败: git ${argumentsList.join(' ')}\n${message}`);
   }
 }
