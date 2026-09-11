@@ -1,6 +1,6 @@
 ---
 name: flow-plan-review
-description: "在 flow-plans 之后、实现前审查计划，重新建立决策到 design.md 和 task.md 的追踪映射，并通过场景反证发现遗漏；问题修正后进入 flow-implement。不适用于 bugfix 或实现代码审查。Use automatically after flow-plans and before implementation. Review plans after flow-plans and before implementation, re-establish traceability mapping from decisions to design.md and task.md, discover omissions through scenario validation; proceed to flow-implement after fixing issues. Not applicable to bugfix or implementation code review."
+description: "在 flow-plans 之后、实现前审查计划，重新建立决策到 design.md 和 task.md 的追踪映射，并通过场景反证发现遗漏；问题修正后进入 flow-implement。不适用于 bugfix 或实现代码审查"
 metadata:
   author: icc-grow
   version: "1.1.0"
@@ -10,14 +10,13 @@ metadata:
 
 审查 `flow-plans` 生成的 `design.md` 和 `task.md`，确认已批准的决策被完整、准确地转化为可执行任务。
 
-**执行流程：** 检查前置条件 → 决策编号 → 追踪映射 → 场景反证 → 输出问题 → 等待确认 → 修正文档 → 调用 `flow-implement`
+**执行流程：** 前置条件 → 审查内容 → 问题输出 → 等待确认 → 修正文档 → 调用 `/flow-implement`
 
 ---
 
 ## 前置条件
 
-- 必须同时存在：已确认的决策、`design.md` 和同目录的 `task.md`。缺少任一项时停止，不得从设计反推决策。
-- 不适用于 `flow-bugfix`。代码审查由 `flow-review` 负责。
+必须同时存在：已确认的决策、`design.md` 和同目录的 `task.md`。缺少任一项时停止，不得从设计反推决策。
 
 ---
 
@@ -39,7 +38,7 @@ metadata:
 
 ---
 
-## 3输出
+## 问题输出
 
 - **阻塞**：决策断链、文档矛盾、任务越界或计划不可执行，未解决前不得实现
 - **建议**：存在明确的维护或验证风险，但不影响正确实施
@@ -54,7 +53,7 @@ P1 [阻塞/建议/决策缺失] 标题
 ```
 ---
 
-## 修正流程
+## 修正文档
 
 - 确认前不修改文件；确认后只修改 `design.md` 和 `task.md`，再重新审查。对 `[决策缺失]` - 项，澄清后直接补充到 `design.md`，必要时更新 `task.md`。
 - 阻塞项清零后自动调用 `/flow-implement`；用户要求停在计划阶段时除外。

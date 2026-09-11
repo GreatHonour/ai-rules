@@ -1,6 +1,6 @@
 ---
 name: flow-brainstorm
-description: "必须用于任何新功能、新组件、产品流程、活动或行为变更。适用于：需求不明确、范围未定义、存在多种方案、需要设计决策、跨模块变更、新业务规则。不适用于 bug 或边界明确的小改动。You MUST use this before ANY new feature, component, product flow, campaign, or behavior change. Use when requirements unclear, scope undefined, multiple approaches possible, design decisions needed, cross-module changes, new business rules. DO NOT use for bugs or clearly-defined small changes."
+description: "必须用于任何新功能、新组件、产品流程、活动或行为变更。适用于：需求不明确、范围未定义、存在多种方案、需要设计决策、跨模块变更、新业务规则。不适用于 bug 或边界明确的小改动"
 metadata:
   author: icc-grow
   version: "2.1.0"
@@ -41,7 +41,7 @@ metadata:
 
 ---
 
-## 理业务闭环
+## 业务闭环
 
 先用简短流程复述需求，例如：
 

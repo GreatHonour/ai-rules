@@ -1,6 +1,6 @@
 ---
 name: flow-e2e
-description: "在真实浏览器中验证集成场景，记录证据、处理失败并更新验证状态。前置条件：必须存在 task.md 的集成验证任务或 fix.md 的验证场景。如果没有验证任务 - 询问用户是否需要。适用于：跨组件交互、完整用户流程、浏览器特定行为。Use after review or bugfix when complete user flows require browser verification. Prerequisites: must have integration verification tasks in task.md or verification scenarios in fix.md. Verify integration scenarios in real browser, record evidence, handle failures and update verification status. Applicable to: cross-component interactions, complete user flows, browser-specific behaviors. DO NOT use without verification tasks."
+description: "在真实浏览器中验证集成场景，记录证据、处理失败并更新验证状态。前置条件：必须存在 task.md 的集成验证任务或 fix.md 的验证场景。如果没有验证任务 - 询问用户是否需要。适用于：跨组件交互、完整用户流程、浏览器特定行为"
 metadata:
   author: icc-grow
   version: "2.3.0"
@@ -14,7 +14,7 @@ metadata:
 
 ---
 
-## 验证范围
+## 确定范围
 
 **验证对象**：`task.md`「集成验证」中的每个 Txx 或 `*-fix.md` 中的「验证场景」
 

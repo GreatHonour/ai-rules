@@ -1,0 +1,13 @@
+{
+  "[task_id 例如 T1、T2]": {
+    "databaseMigration": ["[数据库迁移文档地址]"],
+    "data": [
+      {
+        "title": "[明确任务名]",
+        "status": "[pending、in_progress、passed、failed、blocked、skipped、inconclusive]",
+        "verify": "[可观察验证条件]",
+        "evidence": ["[证据文件名]"]
+      }
+    ]
+  }
+}

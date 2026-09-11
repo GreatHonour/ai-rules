@@ -1,6 +1,6 @@
 ---
 name: flow-implement
-description: "按 design.md 和 task.md 的依赖顺序实现未完成任务。前置条件：必须存在 design.md 和 task.md。如果没有设计文档 - 先调用 plans；如果需求不明确 - 先调用 brainstorm。完成测试与质量检查后更新任务状态。Use when approved design and task list exist and user is ready to implement. Prerequisites: must have design.md and task.md. Implement incomplete tasks in dependency order per design.md and task.md. If no design docs - call plans first; if requirements unclear - call brainstorm first. Update task status after completing tests and quality checks. DO NOT use without design.md/task.md - call plans first."
+description: "按 design.md 和 task.md 的依赖顺序实现未完成任务。前置条件：必须存在 design.md 和 task.md。如果没有设计文档 - 先调用 plans；如果需求不明确 - 先调用 brainstorm。完成测试与质量检查后更新任务状态"
 metadata:
   author: icc-grow
   version: "2.2.0"
@@ -8,11 +8,9 @@ metadata:
 
 # 任务实现 (Implement)
 
-读取 `.docs/[文件名]/[YYYY-MM-DD]/design.md` 和 `task.md`，实现未完成的功能任务。"集成验证"任务留给 `flow-e2e/SKILL.md`。
-
-**执行流程**： 读取设计 → 选择任务 → 实现验证 → 更新状态 → 调用 review
-
-**TDD 检测**： 是否有可用的测试基础设施，无 → 询问用户是否配置测试基础设施
+- 读取 `design.md` 和 `task.md`，实现未完成的功能任务。"集成验证"任务留给 `/flow-e2e`。
+- **TDD 检测**： 是否有可用的测试基础设施，无 → 询问用户是否配置测试基础设施
+- **执行流程**： 读取设计 → 选择任务 → 实现验证 → 更新状态 → 调用`/flow-review`
 
 ---
 
@@ -20,7 +18,7 @@ metadata:
 
 1. **按设计实现**：按 `task.md` 任务边界实现，不增加非本次任务范围的功能或重构。
 2. **TDD 原则**：可测试的行为变更使用 TDD：先确认测试失败，再实现并确认通过。文档、配置、静态样式等无法有效测试的任务使用对应检查，不伪造测试。
-3. **使用项目工具**：测试、类型检查、lint 和 build 使用项目已有命令，只执行适用项。
+3. **使用项目工具**：测试、类型检查、lint 使用项目已有命令，只执行适用项。
 4. **需求变更处理**：需要改变业务行为、边界或方案时停止并报告。实现级修正同步到 `design.md`；任务边界变化同步到 `task.md`。
 5. **规范约定**：规则文件已覆盖相关约定，禁止再读示例组件确认，如有不清晰请询问用户。
 
@@ -49,8 +47,7 @@ metadata:
 - 通过后才将对应功能任务标记为 `[x]`
 
 **Subagent 约束**：
-- 执行前读取 `AGENTS.md` 和任务相关规则
-- 可以读取必要上下文，但不得实现其他任务或修改 `task.md`
+- 读取 `AGENTS.md`、相关规则和现有实现，只修改确认范围内的文件
 - 需要修改范围外文件时立即停止并申请扩展，不得先修改后报告
 - 执行期间，其写入范围不得由其他 agent 同时修改
 - 返回改动文件列表、检查结果和阻塞项
@@ -62,9 +59,6 @@ metadata:
 1. 读取设计、任务、规则和相关代码，确定验证命令。
 2. 排除"集成验证"任务，按依赖选择功能任务并决定串行或并行。
 3. 对每个任务执行 - 失败验证（适用时）→ 实现 → 增量检查（仅针对当前修改的文件）→ 更新 task.md 状态
-4. 全部功能任务完成后运行适用的完整检查，对比基线排除误报。
-5. 调用 review，如有问题，修复后重新验证受影响任务，最多重试 2 次后报告剩余阻塞项。
-6. review 通过后，implement 流程结束。
 
 ## task.md 状态格式
 
