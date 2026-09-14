@@ -23,6 +23,11 @@ export interface InitializeProjectDependencies {
   readonly cleanupDownloads: boolean;
 }
 
+export interface InitializeProjectResult {
+  readonly backupPath: string;
+  readonly manifest: Manifest;
+}
+
 const DEFAULT_DEPENDENCIES: InitializeProjectDependencies = {
   fetchRegistry,
   downloadResources,
@@ -84,12 +89,12 @@ function createDownloadRequests(manifest: Manifest): readonly ResourceDownloadRe
 export async function initializeProject(
   options: InitializeProjectOptions,
   dependencies: InitializeProjectDependencies = DEFAULT_DEPENDENCIES
-): Promise<Manifest> {
+): Promise<InitializeProjectResult> {
   const registry = await dependencies.fetchRegistry(options.registryUrl);
   const manifest = createManifest(options, registry, dependencies);
   const downloadedBatch = await dependencies.downloadResources(createDownloadRequests(manifest));
   try {
-    await syncResources(options.workspacePath, downloadedBatch.resources, {
+    const syncResult = await syncResources(options.workspacePath, downloadedBatch.resources, {
       manifest,
       afterSwap: async () =>
         writeAgentsDocument(
@@ -97,7 +102,7 @@ export async function initializeProject(
           Object.entries(manifest.rules).map(([name, entry]) => ({ name, description: entry.desc }))
         ),
     });
-    return manifest;
+    return { manifest, backupPath: syncResult.backupPath };
   } finally {
     if (dependencies.cleanupDownloads) {
       await rm(downloadedBatch.temporaryRoot, { recursive: true, force: true });

@@ -21,6 +21,11 @@ export interface ConfigureProjectDependencies {
   readonly cleanupDownloads: boolean;
 }
 
+export interface ConfigureProjectResult {
+  readonly backupPath: string;
+  readonly manifest: Manifest;
+}
+
 const DEFAULT_DEPENDENCIES: ConfigureProjectDependencies = {
   fetchRegistry,
   downloadResources,
@@ -32,7 +37,7 @@ const DEFAULT_DEPENDENCIES: ConfigureProjectDependencies = {
 export async function configureProject(
   options: ConfigureProjectOptions,
   dependencies: ConfigureProjectDependencies = DEFAULT_DEPENDENCIES
-): Promise<Manifest> {
+): Promise<ConfigureProjectResult> {
   const currentManifest = await readManifest(options.workspacePath);
   const registry = await dependencies.fetchRegistry(currentManifest.registryUrl);
   const selectedRules = Object.fromEntries(
@@ -59,7 +64,7 @@ export async function configureProject(
   }));
   const downloadedBatch = await dependencies.downloadResources(requests);
   try {
-    await syncResources(options.workspacePath, downloadedBatch.resources, {
+    const syncResult = await syncResources(options.workspacePath, downloadedBatch.resources, {
       removedRuleNames,
       manifest: nextManifest,
       afterSwap: async () =>
@@ -68,7 +73,7 @@ export async function configureProject(
           Object.entries(selectedRules).map(([name, entry]) => ({ name, description: entry.desc }))
         ),
     });
-    return nextManifest;
+    return { manifest: nextManifest, backupPath: syncResult.backupPath };
   } finally {
     if (dependencies.cleanupDownloads) {
       await rm(downloadedBatch.temporaryRoot, { recursive: true, force: true });

@@ -4,7 +4,7 @@ import { join } from 'node:path';
 
 import { afterEach, describe, expect, it } from 'vitest';
 
-import { syncResources } from '../resource-sync.js';
+import { ResourceSyncError, syncResources } from '../resource-sync.js';
 
 const temporaryDirectories: string[] = [];
 
@@ -32,11 +32,15 @@ describe('syncResources', () => {
     await writeFile(join(workspacePath, '.agents', 'skills', 'personal', 'keep.md'), 'keep', 'utf8');
     await writeFile(join(sourceRoot, 'flow-test', 'new.md'), 'new', 'utf8');
 
-    await syncResources(workspacePath, [{ kind: 'skills', name: 'flow-test', sourcePath: join(sourceRoot, 'flow-test') }]);
+    const result = await syncResources(workspacePath, [
+      { kind: 'skills', name: 'flow-test', sourcePath: join(sourceRoot, 'flow-test') },
+    ]);
 
     await expect(readFile(join(workspacePath, '.agents', 'skills', 'flow-test', 'new.md'), 'utf8')).resolves.toBe('new');
     await expect(readFile(join(workspacePath, '.agents', 'skills', 'flow-test', 'old.md'), 'utf8')).rejects.toThrow();
     await expect(readFile(join(workspacePath, '.agents', 'skills', 'personal', 'keep.md'), 'utf8')).resolves.toBe('keep');
+    await expect(readFile(join(result.backupPath, 'skills', 'flow-test', 'old.md'), 'utf8')).resolves.toBe('old');
+    await expect(readFile(join(result.backupPath, 'skills', 'personal', 'keep.md'), 'utf8')).resolves.toBe('keep');
   });
 
   it('不覆盖已存在的非 flow skill', async () => {
@@ -55,7 +59,7 @@ describe('syncResources', () => {
     await expect(readFile(join(workspacePath, '.agents', 'skills', 'custom', 'value.md'), 'utf8')).resolves.toBe('local');
   });
 
-  it('交换后的操作失败时恢复旧目录', async () => {
+  it('后续操作失败时保留备份和已更新资源供手动处理', async () => {
     const workspacePath = await createWorkspace();
     const sourceRoot = await createWorkspace();
     await mkdir(join(workspacePath, '.agents', 'skills', 'flow-test'), { recursive: true });
@@ -63,15 +67,24 @@ describe('syncResources', () => {
     await writeFile(join(workspacePath, '.agents', 'skills', 'flow-test', 'value.md'), 'old', 'utf8');
     await writeFile(join(sourceRoot, 'flow-test', 'value.md'), 'new', 'utf8');
 
-    await expect(
-      syncResources(workspacePath, [{ kind: 'skills', name: 'flow-test', sourcePath: join(sourceRoot, 'flow-test') }], {
+    let syncError: unknown;
+    try {
+      await syncResources(workspacePath, [{ kind: 'skills', name: 'flow-test', sourcePath: join(sourceRoot, 'flow-test') }], {
         afterSwap: async () => {
           throw new Error('模拟后续写入失败');
         },
-      })
-    ).rejects.toThrow('模拟后续写入失败');
+      });
+    } catch (error: unknown) {
+      syncError = error;
+    }
 
-    await expect(readFile(join(workspacePath, '.agents', 'skills', 'flow-test', 'value.md'), 'utf8')).resolves.toBe('old');
+    expect(syncError).toBeInstanceOf(ResourceSyncError);
+    expect(syncError).toHaveProperty('message', expect.stringContaining('AGENTS.md: 模拟后续写入失败'));
+    if (!(syncError instanceof ResourceSyncError)) {
+      throw new Error('应抛出 ResourceSyncError');
+    }
+    await expect(readFile(join(workspacePath, '.agents', 'skills', 'flow-test', 'value.md'), 'utf8')).resolves.toBe('new');
+    await expect(readFile(join(syncError.backupPath, 'skills', 'flow-test', 'value.md'), 'utf8')).resolves.toBe('old');
   });
 
   it('拒绝危险资源名且不删除工作区文件', async () => {

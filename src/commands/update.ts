@@ -36,6 +36,7 @@ export interface UpdateProjectDependencies {
 }
 
 export interface UpdateProjectResult extends UpdatePlan {
+  readonly backupPath?: string;
   readonly status: 'current' | 'cancelled' | 'updated';
 }
 
@@ -120,7 +121,7 @@ export async function updateProject(
   const downloadedBatch = await dependencies.downloadResources(downloadRequests);
   try {
     const nextManifest = createUpdatedManifest(manifest, plan, registry.repositoryUrl, dependencies.now());
-    await syncResources(workspacePath, downloadedBatch.resources, {
+    const syncResult = await syncResources(workspacePath, downloadedBatch.resources, {
       manifest: nextManifest,
       afterSwap: async () =>
         writeAgentsDocument(
@@ -128,7 +129,7 @@ export async function updateProject(
           Object.entries(nextManifest.rules).map(([name, entry]) => ({ name, description: entry.desc }))
         ),
     });
-    return { ...plan, status: 'updated' };
+    return { ...plan, status: 'updated', backupPath: syncResult.backupPath };
   } finally {
     if (dependencies.cleanupDownloads) {
       await rm(downloadedBatch.temporaryRoot, { recursive: true, force: true });

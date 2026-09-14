@@ -42,7 +42,7 @@ team-cli update
 team-cli update --yes
 ```
 
-`flow-*` skill 会按完整目录覆盖。本地已有的非 `flow-*` skill 不被覆盖。下载、校验或落盘失败时，资源目录与 manifest 回滚到更新前状态。
+`flow-*` skill 会按完整目录覆盖。本地已有的非 `flow-*` skill 不被覆盖。每次写入前会在项目根目录保留 `.team-cli-agents-backup-<UTC 时间戳>` 备份；成功后 CLI 会提示用户确认并手动删除。落盘失败时，CLI 列出失败资源并保留备份，用户可据此手动更新或恢复。
 
 ### upload
 

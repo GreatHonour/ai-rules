@@ -177,7 +177,7 @@ function registerInitCommand(program: Command): void {
       const project = await collectProjectProfile(options);
       const registry = await fetchRegistry(registryUrl);
       const ruleNames = await collectRuleNames(options, registry);
-      await initializeProject(
+      const result = await initializeProject(
         { workspacePath: options.workspace, registryUrl, project, ruleNames },
         {
           fetchRegistry: async () => registry,
@@ -188,6 +188,7 @@ function registerInitCommand(program: Command): void {
         }
       );
       stdout.write('初始化完成\n');
+      stdout.write(`已保留备份目录，请确认后手动删除: ${result.backupPath}\n`);
     });
 }
 
@@ -212,7 +213,7 @@ function registerConfigCommand(program: Command): void {
         options.environments !== undefined;
       const project = hasProfileOptions ? await collectProjectProfile(options) : undefined;
       const ruleNames = await collectRuleNames(options, registry, Object.keys(manifest.rules));
-      await configureProject(
+      const result = await configureProject(
         {
           workspacePath: options.workspace,
           ruleNames,
@@ -226,6 +227,7 @@ function registerConfigCommand(program: Command): void {
         }
       );
       stdout.write('配置已更新\n');
+      stdout.write(`已保留备份目录，请确认后手动删除: ${result.backupPath}\n`);
     });
 }
 
@@ -259,6 +261,9 @@ function registerUpdateCommand(program: Command): void {
       }
       for (const skillName of result.skippedSkills) {
         stdout.write(`跳过本地非 flow skill: ${skillName}\n`);
+      }
+      if (result.backupPath !== undefined) {
+        stdout.write(`已保留备份目录，请确认后手动删除: ${result.backupPath}\n`);
       }
       stdout.write(`${result.status === 'updated' ? '更新完成' : result.status === 'cancelled' ? '已取消' : '已是最新'}\n`);
     });
