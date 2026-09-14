@@ -38,7 +38,7 @@
     "prepack": "pnpm build",
     "prepublishOnly": "pnpm format:check && pnpm test && pnpm check",
     "release:version": "changeset version",
-    "release:publish": "changeset publish",
+    "release:publish": "node scripts/publishPackage.mjs",
     "test": "vitest run"
   },
   "engines": {

@@ -1,4 +1,4 @@
-# team-cli 版本管理
+# team-cli 发布流程
 
 `@icc-grow/team-cli` 使用 [Changesets](https://github.com/changesets/changesets) 管理版本号、变更记录（CHANGELOG.md）和 npm 发布。包以公开访问级别发布到 npmjs.org。
 
@@ -53,3 +53,5 @@ git commit -m "chore(release): version packages"
 ```bash
 pnpm release:publish
 ```
+
+命令会保留 Changesets 原始输出，并在结束后明确显示“发布成功”及对应 npm 页面地址；若没有待发布的新版本，则会明确提示“没有发布新版本”。

@@ -12,4 +12,4 @@ pnpm changeset
 pnpm release:version
 ```
 
-完整流程见项目根目录 [version.md](../version.md)。
+完整流程见项目根目录 [CHANGESET.md](../CHANGESET.md)。
