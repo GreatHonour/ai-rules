@@ -1,5 +1,11 @@
 # @icc-grow/team-cli
 
+## 1.0.2
+
+### Patch Changes
+
+- 修复 Windows `.agents` 占用兼容
+
 ## 1.0.1
 
 ### Patch Changes
