@@ -16,11 +16,14 @@ import { releaseRegistry } from './commands/release.js';
 import { updateProject } from './commands/update.js';
 import { uploadProjectIssues } from './commands/upload.js';
 import { runRegistryCheck } from './git/release-check.js';
+import { getPackageVersion } from './package-info.js';
 import { readManifest } from './project/manifest.js';
 import { downloadResources } from './registry/resource-downloader.js';
 import { fetchRegistry } from './registry/registry-client.js';
 
 const DEFAULT_REGISTRY_URL = 'https://raw.githubusercontent.com/GreatHonour/ai-rules/main/registry.json';
+// CLI 与 manifest 共享安装包中声明的版本。
+const PACKAGE_VERSION = getPackageVersion();
 
 interface ProfileCommandOptions {
   readonly workspace: string;
@@ -167,7 +170,7 @@ function registerInitCommand(program: Command): void {
           fetchRegistry: async () => registry,
           downloadResources,
           now: () => new Date(),
-          cliVersion: '1.0.0',
+          cliVersion: PACKAGE_VERSION,
           cleanupDownloads: true,
         }
       );
@@ -296,7 +299,7 @@ function registerUploadCommand(program: Command): void {
 
 /** 创建 team-cli 命令入口。 */
 export function createProgram(): Command {
-  const program = new Command().name('team-cli').description('管理团队 rules、skills 与 issue 上传').version('1.0.0');
+  const program = new Command().name('team-cli').description('管理团队 rules、skills 与 issue 上传').version(PACKAGE_VERSION);
   registerInitCommand(program);
   registerConfigCommand(program);
   registerUpdateCommand(program);

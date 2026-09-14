@@ -1,6 +1,6 @@
 # team-cli 版本管理
 
-`team-cli` 使用 [Changesets](https://github.com/changesets/changesets) 管理版本号与变更记录（CHANGELOG.md）。当前流程仅覆盖本地版本管理，npm 发布暂未接入。
+`@icc-grow/team-cli` 使用 [Changesets](https://github.com/changesets/changesets) 管理版本号、变更记录（CHANGELOG.md）和 npm 发布。包以公开访问级别发布到 npmjs.org。
 
 ## 第一步：记录变更（开发阶段）
 
@@ -42,6 +42,14 @@ git add package.json CHANGELOG.md .changeset
 git commit -m "chore(release): version packages"
 ```
 
-## 后续：发布（暂未接入）
+## 第三步：自动发布
 
-npm 发布（`changeset publish` 与 Git Tag）尚未接入，待发布目标确定后补充。发布凭据只应保存在本地（`~/.npmrc` 或环境变量），禁止写入仓库。
+合并包含 changeset 的 PR 后，GitHub Actions 会创建或更新版本 PR；合并该版本 PR 后，Node.js 22 发布工作流执行 `changeset publish`，发布 npm 包并创建 GitHub Release。包的运行时仍支持 Node.js 20.17 或更高版本。
+
+仓库管理员需要在 GitHub 仓库设置中配置 `NPM_TOKEN`：它必须是 `@icc-grow` 组织可发布该包的 npm automation token。令牌只能存放在 GitHub Actions secret 或本机用户级 npm 配置中，禁止写入仓库。
+
+首次发布前需确认 npm 组织已授予发布者 `@icc-grow/team-cli` 的公开发布权限。紧急手动发布可在完成质量检查后执行：
+
+```bash
+pnpm release:publish
+```

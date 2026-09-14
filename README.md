@@ -1,11 +1,11 @@
 # team-cli
 
-`team-cli` 从公开 Git 仓库向项目分发团队 rules 与 skills，并提供版本更新、registry 发布门禁和 issue 隔离上传。CLI 要求 Node.js 20 或更高版本，包管理统一使用 pnpm。
+`@icc-grow/team-cli` 从公开 Git 仓库向项目分发团队 rules 与 skills，并提供版本更新、registry 发布门禁和 issue 隔离上传。CLI 要求 Node.js 20.17 或更高版本、系统已安装 Git，包管理统一使用 pnpm。
 
 ## 安装与初始化
 
 ```bash
-pnpm add -D team-cli
+pnpm add -D @icc-grow/team-cli
 team-cli init
 ```
 
@@ -96,9 +96,9 @@ CI 使用同一校验器与合并目标分支比较：
 pnpm agents registry:check --base <target-ref>
 ```
 
-## 版本管理与格式化
+## 版本管理、发布与格式化
 
-- 版本号与变更记录由 Changesets 管理，流程见 [version.md](./version.md)。
+- 版本号、变更记录与 npm 发布由 Changesets 管理，流程见 [version.md](./version.md)。
 - 代码风格由 Prettier 统一（配置见 `.prettierrc.cjs`）：`pnpm format` 全仓库格式化，`pnpm format:check` 只读检查。
 - 提交信息格式由 commitlint 在 commit-msg 阶段校验，type 列表见 `.agents/rules/git-commit.md`。
 

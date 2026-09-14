@@ -5,6 +5,7 @@ import { writeAgentsDocument } from '../project/agents-document.js';
 import { syncResources } from '../project/resource-sync.js';
 import { downloadResources } from '../registry/resource-downloader.js';
 import { fetchRegistry } from '../registry/registry-client.js';
+import { getPackageVersion } from '../package-info.js';
 import { formatUtcDate } from '../validation.js';
 
 export interface InitializeProjectOptions {
@@ -26,7 +27,7 @@ const DEFAULT_DEPENDENCIES: InitializeProjectDependencies = {
   fetchRegistry,
   downloadResources,
   now: () => new Date(),
-  cliVersion: '1.0.0',
+  cliVersion: getPackageVersion(),
   cleanupDownloads: true,
 };
 
