@@ -25,12 +25,12 @@ const DEFAULT_REGISTRY_URL = 'https://raw.githubusercontent.com/GreatHonour/ai-r
 // CLI 与 manifest 共享安装包中声明的版本。
 const PACKAGE_VERSION = getPackageVersion();
 
-interface ProfileCommandOptions {
+export interface ProfileCommandOptions {
   readonly workspace: string;
   readonly registry?: string;
   readonly name?: string;
-  readonly frameworks?: readonly string[];
-  readonly architecture?: string;
+  readonly frontendFrameworks?: readonly string[];
+  readonly backendFrameworks?: readonly string[];
   readonly environments?: readonly string[];
   readonly rules?: readonly string[] | false;
 }
@@ -72,8 +72,7 @@ async function requireOption(currentValue: string | undefined, fieldName: string
 async function requireListOption(
   currentValue: readonly string[] | false | undefined,
   fieldName: string,
-  promptText: string,
-  allowEmpty = false
+  promptText: string
 ): Promise<readonly string[]> {
   if (currentValue !== undefined) {
     return currentValue === false ? [] : currentValue;
@@ -82,18 +81,32 @@ async function requireListOption(
     throw new Error(`非交互环境缺少必需参数: ${fieldName}`);
   }
   const enteredValues = parseCommaSeparated(await askQuestion(promptText));
-  if (!allowEmpty && enteredValues.length === 0) {
+  if (enteredValues.length === 0) {
     throw new Error(`${fieldName} 不能为空`);
   }
   return enteredValues;
 }
 
+/** 读取可选数组参数，非交互环境未提供时使用空数组。 */
+async function collectOptionalListOption(
+  currentValue: readonly string[] | undefined,
+  promptText: string
+): Promise<readonly string[]> {
+  if (currentValue !== undefined) {
+    return currentValue;
+  }
+  if (!stdin.isTTY) {
+    return [];
+  }
+  return parseCommaSeparated(await askQuestion(promptText));
+}
+
 /** 从命令选项采集项目画像。 */
-async function collectProjectProfile(options: ProfileCommandOptions): Promise<ProjectProfile> {
+export async function collectProjectProfile(options: ProfileCommandOptions): Promise<ProjectProfile> {
   return {
     name: await requireOption(options.name, '--name', '项目名称: '),
-    frameworks: await requireListOption(options.frameworks, '--frameworks', '框架（逗号分隔）: ', true),
-    architecture: await requireOption(options.architecture, '--architecture', '架构: '),
+    frontendFrameworks: await collectOptionalListOption(options.frontendFrameworks, '前端框架（逗号分隔，可留空）: '),
+    backendFrameworks: await collectOptionalListOption(options.backendFrameworks, '后端框架（逗号分隔，可留空）: '),
     environments: await requireListOption(options.environments, '--environments', '运行环境（逗号分隔）: '),
   };
 }
@@ -154,8 +167,8 @@ function registerInitCommand(program: Command): void {
     .option('--workspace <path>', '目标工作区', process.cwd())
     .option('--registry <url>', '公开 registry URL', DEFAULT_REGISTRY_URL)
     .option('--name <name>', '项目名称')
-    .option('--frameworks <names...>', '项目框架')
-    .option('--architecture <name>', '项目架构')
+    .option('--frontend-frameworks <names...>', '前端框架（可选）')
+    .option('--backend-frameworks <names...>', '后端框架（可选）')
     .option('--environments <names...>', '运行环境')
     .option('--rules <names...>', '选择的 rules')
     .option('--no-rules', '明确不选择任何 rule')
@@ -184,8 +197,8 @@ function registerConfigCommand(program: Command): void {
     .command('config')
     .option('--workspace <path>', '目标工作区', process.cwd())
     .option('--name <name>', '项目名称')
-    .option('--frameworks <names...>', '项目框架')
-    .option('--architecture <name>', '项目架构')
+    .option('--frontend-frameworks <names...>', '前端框架（可选）')
+    .option('--backend-frameworks <names...>', '后端框架（可选）')
     .option('--environments <names...>', '运行环境')
     .option('--rules <names...>', '选择的 rules')
     .option('--no-rules', '明确不选择任何 rule')
@@ -194,8 +207,8 @@ function registerConfigCommand(program: Command): void {
       const registry = await fetchRegistry(manifest.registryUrl);
       const hasProfileOptions =
         options.name !== undefined ||
-        options.frameworks !== undefined ||
-        options.architecture !== undefined ||
+        options.frontendFrameworks !== undefined ||
+        options.backendFrameworks !== undefined ||
         options.environments !== undefined;
       const project = hasProfileOptions ? await collectProjectProfile(options) : undefined;
       const ruleNames = await collectRuleNames(options, registry, Object.keys(manifest.rules));

@@ -17,8 +17,8 @@ const LOCAL_ENTRY = {
 };
 
 const MANIFEST: Manifest = {
-  schemaVersion: 1,
-  project: { name: 'demo', frameworks: [], architecture: 'cli', environments: ['PC'] },
+  schemaVersion: 2,
+  project: { name: 'demo', frontendFrameworks: [], backendFrameworks: [], environments: ['PC'] },
   registryUrl: 'https://example.com/registry.json',
   repositoryUrl: 'https://example.com/rules.git',
   rules: { typescript: LOCAL_ENTRY },

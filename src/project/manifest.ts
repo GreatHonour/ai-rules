@@ -61,14 +61,27 @@ function validateSkillMap(value: unknown, fieldPath: string): Readonly<Record<st
   );
 }
 
-/** 校验项目画像。 */
+/** 校验 schema v2 项目画像。 */
 function validateProjectProfile(value: unknown): ProjectProfile {
   const project = requireRecord(value, 'manifest.project');
-  requireExactKeys(project, ['name', 'frameworks', 'architecture', 'environments'], 'manifest.project');
+  requireExactKeys(project, ['name', 'frontendFrameworks', 'backendFrameworks', 'environments'], 'manifest.project');
   return {
     name: requireString(project.name, 'manifest.project.name'),
-    frameworks: requireStringArray(project.frameworks, 'manifest.project.frameworks'),
-    architecture: requireString(project.architecture, 'manifest.project.architecture'),
+    frontendFrameworks: requireStringArray(project.frontendFrameworks, 'manifest.project.frontendFrameworks'),
+    backendFrameworks: requireStringArray(project.backendFrameworks, 'manifest.project.backendFrameworks'),
+    environments: requireStringArray(project.environments, 'manifest.project.environments'),
+  };
+}
+
+/** 将 schema v1 项目画像迁移为当前结构。 */
+function migrateLegacyProjectProfile(value: unknown): ProjectProfile {
+  const project = requireRecord(value, 'manifest.project');
+  requireExactKeys(project, ['name', 'frameworks', 'architecture', 'environments'], 'manifest.project');
+  requireString(project.architecture, 'manifest.project.architecture');
+  return {
+    name: requireString(project.name, 'manifest.project.name'),
+    frontendFrameworks: requireStringArray(project.frameworks, 'manifest.project.frameworks'),
+    backendFrameworks: [],
     environments: requireStringArray(project.environments, 'manifest.project.environments'),
   };
 }
@@ -81,12 +94,14 @@ export function validateManifest(value: unknown): Manifest {
     ['schemaVersion', 'project', 'registryUrl', 'repositoryUrl', 'rules', 'skills', 'cliVersion', 'updatedAt'],
     'manifest'
   );
-  if (manifest.schemaVersion !== 1) {
-    throw new Error('manifest.schemaVersion 必须为 1');
+  if (manifest.schemaVersion !== 1 && manifest.schemaVersion !== 2) {
+    throw new Error('manifest.schemaVersion 必须为 1 或 2');
   }
+  const project =
+    manifest.schemaVersion === 1 ? migrateLegacyProjectProfile(manifest.project) : validateProjectProfile(manifest.project);
   return {
-    schemaVersion: 1,
-    project: validateProjectProfile(manifest.project),
+    schemaVersion: 2,
+    project,
     registryUrl: requireString(manifest.registryUrl, 'manifest.registryUrl'),
     repositoryUrl: requireString(manifest.repositoryUrl, 'manifest.repositoryUrl'),
     rules: validateResourceMap(manifest.rules, 'manifest.rules'),

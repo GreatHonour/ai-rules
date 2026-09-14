@@ -11,8 +11,13 @@ const temporaryDirectories: string[] = [];
 /** 创建合法 manifest 测试夹具。 */
 function createManifest(): unknown {
   return {
-    schemaVersion: 1,
-    project: { name: 'demo', frameworks: ['vue3'], architecture: 'single-page-application', environments: ['PC', 'H5'] },
+    schemaVersion: 2,
+    project: {
+      name: 'demo',
+      frontendFrameworks: ['vue3'],
+      backendFrameworks: ['nestjs'],
+      environments: ['PC', 'H5'],
+    },
     registryUrl: 'https://example.com/registry.json',
     repositoryUrl: 'https://example.com/rules.git',
     rules: {},
@@ -31,8 +36,35 @@ afterEach(async () => {
 describe('validateManifest', () => {
   it('校验完整项目画像和受管 skill', () => {
     const manifest = validateManifest(createManifest());
+    expect(manifest.schemaVersion).toBe(2);
+    expect(manifest.project.frontendFrameworks).toEqual(['vue3']);
+    expect(manifest.project.backendFrameworks).toEqual(['nestjs']);
     expect(manifest.project.environments).toEqual(['PC', 'H5']);
     expect(manifest.skills['flow-implement']?.managed).toBe(true);
+  });
+
+  it('读取 schema v1 时迁移旧项目画像', () => {
+    const legacyManifest = createManifest();
+    if (typeof legacyManifest !== 'object' || legacyManifest === null || !('project' in legacyManifest)) {
+      throw new Error('测试夹具结构错误');
+    }
+    Reflect.set(legacyManifest, 'schemaVersion', 1);
+    Reflect.set(legacyManifest, 'project', {
+      name: 'demo',
+      frameworks: ['vue3'],
+      architecture: 'single-page-application',
+      environments: ['PC', 'H5'],
+    });
+
+    const manifest = validateManifest(legacyManifest);
+
+    expect(manifest.schemaVersion).toBe(2);
+    expect(manifest.project).toEqual({
+      name: 'demo',
+      frontendFrameworks: ['vue3'],
+      backendFrameworks: [],
+      environments: ['PC', 'H5'],
+    });
   });
 
   it('拒绝 managed 不为 true、危险名称和旧 url 字段', () => {
@@ -49,13 +81,13 @@ describe('validateManifest', () => {
     expect(() => validateManifest(manifest)).toThrow('manifest.skills.flow-implement.url');
   });
 
-  it('报告嵌套字段路径', () => {
+  it('schema v2 缺少后端框架时报告嵌套字段路径', () => {
     const manifest = createManifest();
     if (typeof manifest !== 'object' || manifest === null || !('project' in manifest)) throw new Error('测试夹具结构错误');
     const project = manifest.project;
     if (typeof project !== 'object' || project === null) throw new Error('测试夹具结构错误');
-    Reflect.deleteProperty(project, 'architecture');
-    expect(() => validateManifest(manifest)).toThrow('manifest.project.architecture');
+    Reflect.deleteProperty(project, 'backendFrameworks');
+    expect(() => validateManifest(manifest)).toThrow('manifest.project.backendFrameworks');
   });
 });
 

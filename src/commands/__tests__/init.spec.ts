@@ -61,7 +61,7 @@ describe('initializeProject', () => {
       {
         workspacePath: fixture.workspacePath,
         registryUrl: 'https://example.com/registry.json',
-        project: { name: 'demo', frameworks: ['vue3'], architecture: 'spa', environments: ['PC'] },
+        project: { name: 'demo', frontendFrameworks: ['vue3'], backendFrameworks: ['nestjs'], environments: ['PC'] },
         ruleNames: ['typescript'],
       },
       {
@@ -87,6 +87,10 @@ describe('initializeProject', () => {
       '# Skill'
     );
     const manifestText = await readFile(join(fixture.workspacePath, '.agents', 'manifest.json'), 'utf8');
+    expect(manifestText).toContain('"schemaVersion": 2');
+    expect(manifestText).toContain('"frontendFrameworks"');
+    expect(manifestText).toContain('"backendFrameworks"');
+    expect(manifestText).not.toContain('"architecture"');
     expect(manifestText).toContain('"flow-test"');
     expect(manifestText).not.toContain('"personal"');
     await expect(readFile(join(fixture.workspacePath, 'AGENTS.md'), 'utf8')).resolves.toContain('.agents/rules/typescript.md');
@@ -100,7 +104,7 @@ describe('initializeProject', () => {
         {
           workspacePath: fixture.workspacePath,
           registryUrl: 'https://example.com/registry.json',
-          project: { name: 'demo', frameworks: [], architecture: 'cli', environments: ['PC'] },
+          project: { name: 'demo', frontendFrameworks: [], backendFrameworks: [], environments: ['PC'] },
           ruleNames: ['missing'],
         },
         {

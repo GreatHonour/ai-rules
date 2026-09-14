@@ -61,7 +61,7 @@ function createManifest(
 ): Manifest {
   const timestamp = formatUtcDate(dependencies.now());
   return {
-    schemaVersion: 1,
+    schemaVersion: 2,
     project: options.project,
     registryUrl: options.registryUrl,
     repositoryUrl: registry.repositoryUrl,

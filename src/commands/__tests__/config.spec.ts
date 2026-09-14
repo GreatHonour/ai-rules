@@ -20,8 +20,8 @@ async function createConfiguredWorkspace(): Promise<{ readonly workspacePath: st
     updatedAt: '2026-09-10 08:00:00',
   };
   const manifest: Manifest = {
-    schemaVersion: 1,
-    project: { name: 'demo', frameworks: ['vue3'], architecture: 'spa', environments: ['PC'] },
+    schemaVersion: 2,
+    project: { name: 'demo', frontendFrameworks: ['vue3'], backendFrameworks: ['nestjs'], environments: ['PC'] },
     registryUrl: 'https://example.com/registry.json',
     repositoryUrl: 'https://example.com/repo.git',
     rules: { typescript: entry },

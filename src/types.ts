@@ -16,13 +16,13 @@ export interface Registry {
 
 export interface ProjectProfile {
   readonly name: string;
-  readonly frameworks: readonly string[];
-  readonly architecture: string;
+  readonly frontendFrameworks: readonly string[];
+  readonly backendFrameworks: readonly string[];
   readonly environments: readonly string[];
 }
 
 export interface Manifest {
-  readonly schemaVersion: 1;
+  readonly schemaVersion: 2;
   readonly project: ProjectProfile;
   readonly registryUrl: string;
   readonly repositoryUrl: string;
