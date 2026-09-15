@@ -1,6 +1,7 @@
 ---
 trigger: model_decision
 description: 当你要编写 Vue 3 组件（.vue 文件）、使用 Composition API、管理响应式数据、定义 Props/Emits/Slots 或使用 vue-router 时，来这里查 Vue 3 语法规范和最佳实践。
+version: "1.0.1"
 ---
 
 # Vue 3 最佳实践（通用 · Vue 3.4+）

@@ -1,6 +1,7 @@
 ---
 trigger: model_decision
 description: Vue 2 项目的测试编写规范
+version: "1.0.1"
 ---
 
 ## Vue 2 测试规范

@@ -3,7 +3,7 @@ name: flow-plans
 description: "用于业务决策已完成且需要技术设计 + 任务拆解时。前置条件：范围已定义、规则已确认、边界已设定。将决策摘要或完整需求转换为 design.md 和 task.md。如果决策不完整 - 先回到 flow-brainstorm。Use when business decisions are COMPLETE and you need technical design + task breakdown. Prerequisites: scope defined, rules confirmed, boundaries set. Converts decision summary or complete requirements into design.md and task.md. DO NOT use if decisions incomplete - return to flow-brainstorm."
 metadata:
   author: icc-grow
-  version: "2.3.0"
+  version: "2.3.1"
 ---
 
 # 规划 (Plans)
@@ -16,7 +16,7 @@ metadata:
 ## Phase 1：技术设计
 
 ### 规则
-1. **读取范围**：只读取本次需求直接相关的代码、 `AGENTS.md`相关规则，沿用项目已有结构。
+1. **读取范围**：只读取本次需求直接相关的代码、当前功能已有文档、本技能明确引用的模板，以及 `AGENTS.md` 要求的规则文件。
 2. **设计范围**：一份 `design.md` 覆盖本次交付和全部已确认决策；规模无法在一份文档内保持清晰时，返回 `flow-brainstorm` 拆分需求。
 3. **设计内容**：写清模块职责、依赖方向、状态归属、数据流转和具体契约，不输出完整实现代码；功能点使用 `[条件/操作] → [预期结果]` 描述可观察行为。
 4. **技术补充**：可由现有代码和项目约定确定的技术细节允许补充，并在具体内容后标记”设计阶段补充”；例如：`- 错误语义：沿用项目统一错误码规范（设计阶段补充）`。补充内容不得改变已确认业务决策。

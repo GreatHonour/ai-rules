@@ -1,6 +1,7 @@
 ---
 trigger: model_decision
 description: uni-app 多端开发规则
+version: "1.0.1"
 ---
 
 # uni-app 多端兼容规范

@@ -1,6 +1,7 @@
 ---
 trigger: model_decision
 description: 创建任何新文件、变量、函数或组件时加载。确认文件名格式、变量命名风格、组件前缀规则时必读。
+version: "1.0.1"
 ---
 
 # 命名规范

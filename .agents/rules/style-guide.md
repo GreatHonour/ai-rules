@@ -1,6 +1,7 @@
 ---
 trigger: model_decision
 description: 当你要编写 CSS、使用 Tailwind 类名、处理主题色或创建 BEM 类名时，来这里查看样式规范和命名规则。
+version: "1.0.1"
 ---
 
 # 样式规范

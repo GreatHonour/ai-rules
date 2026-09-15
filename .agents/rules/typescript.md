@@ -1,9 +1,12 @@
 ---
 trigger: model_decision
 description: TypeScript 通用编码规范：类型安全、命名常量、函数设计、不可变性等。定义 interface/type/enum 或编写业务逻辑时必读。
+version: "1.0.1"
 ---
 
 # TypeScript 规范
+
+**类型定义** 统一放在对应的`types.ts` 或 `xx-types.ts`
 
 ## 类型安全（强制）
 

@@ -1,6 +1,7 @@
 ---
 trigger: model_decision
 description: 当你要编写或修改 VitePress 文档（组件、工具函数、Hooks）时，来这里查看文档结构、Demo 引用规范和 API 模板。
+version: "1.0.1"
 ---
 
 # VitePress 文档规范

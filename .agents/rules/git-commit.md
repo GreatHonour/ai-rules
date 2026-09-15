@@ -1,6 +1,7 @@
 ---
 trigger: model_decision
 description: 当你要帮用户写 commit message 或执行 git commit 的时候，来这里查格式要求。
+version: "1.0.1"
 ---
 
 # Git 提交规范

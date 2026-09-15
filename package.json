@@ -1,6 +1,6 @@
 {
   "name": "@icc-grow/team-cli",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "Git-backed team rule and skill manager",
   "keywords": [
     "cli",

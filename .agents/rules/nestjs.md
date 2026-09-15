@@ -2,6 +2,7 @@
 name: nestjs
 trigger: model_decision
 description: NestJS 模块、Controller、Service、依赖注入、校验、异常处理规范
+version: "1.0.1"
 ---
 
 # NestJS 开发规范

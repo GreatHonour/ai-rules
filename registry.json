@@ -1,28 +1,40 @@
 {
   "repositoryUrl": "https://github.com/GreatHonour/ai-rules.git",
   "rules": {
-    "code-quality": { "version": "1.0.0", "desc": "代码质量自查与常见错误防范规范", "updatedAt": "2026-09-11 06:45:00" },
-    "docs": { "version": "1.0.0", "desc": "VitePress 文档结构、Demo 和 API 编写规范", "updatedAt": "2026-09-11 06:45:00" },
-    "git-commit": { "version": "1.0.0", "desc": "Git 提交格式、类型和提交粒度规范", "updatedAt": "2026-09-11 06:45:00" },
-    "naming": { "version": "1.0.0", "desc": "文件、变量、函数和组件命名规范", "updatedAt": "2026-09-11 06:45:00" },
-    "nestjs": { "version": "1.0.0", "desc": "NestJS 模块、服务和控制器开发规范", "updatedAt": "2026-09-11 06:45:00" },
-    "project-structure": { "version": "1.0.0", "desc": "项目目录职责与模块依赖方向规范", "updatedAt": "2026-09-11 06:45:00" },
-    "style-guide": { "version": "1.0.0", "desc": "CSS、Tailwind 与 BEM 样式编写规范", "updatedAt": "2026-09-11 06:45:00" },
-    "testing-vue2": { "version": "1.0.0", "desc": "Vue 2 组件与交互测试规范", "updatedAt": "2026-09-11 06:45:00" },
-    "testing-vue3": { "version": "1.0.0", "desc": "Vue 3 组件与交互测试规范", "updatedAt": "2026-09-11 06:45:00" },
-    "typescript": { "version": "1.0.0", "desc": "TypeScript 类型安全与编码约定", "updatedAt": "2026-09-11 06:45:00" },
-    "uniapp": { "version": "1.0.0", "desc": "uni-app 跨端开发与平台兼容规范", "updatedAt": "2026-09-11 06:45:00" },
-    "vue2": { "version": "1.0.0", "desc": "Vue 2 组件和响应式开发规范", "updatedAt": "2026-09-11 06:45:00" },
-    "vue3": { "version": "1.0.0", "desc": "Vue 3 Composition API 与组件开发规范", "updatedAt": "2026-09-11 06:45:00" }
+    "code-quality": { "version": "1.0.1", "desc": "编码常犯错误记录表与代码自查规范", "updatedAt": "2026-09-15 00:00:00" },
+    "docs": { "version": "1.0.1", "desc": "VitePress 文档结构、Demo 引用与 API 编写规范", "updatedAt": "2026-09-15 00:00:00" },
+    "git-commit": { "version": "1.0.1", "desc": "commit message 格式与提交粒度规范", "updatedAt": "2026-09-15 00:00:00" },
+    "naming": { "version": "1.0.1", "desc": "文件、变量、函数、组件命名规范", "updatedAt": "2026-09-15 00:00:00" },
+    "nestjs": {
+      "version": "1.0.1",
+      "desc": "NestJS 模块、Controller、Service、依赖注入、校验、异常处理规范",
+      "updatedAt": "2026-09-15 00:00:00"
+    },
+    "project-structure": { "version": "1.0.1", "desc": "目录归属、依赖边界与文件组织规范", "updatedAt": "2026-09-15 00:00:00" },
+    "style-guide": { "version": "1.0.1", "desc": "CSS、Tailwind 类名、BEM 与主题色规范", "updatedAt": "2026-09-15 00:00:00" },
+    "testing-vue2": { "version": "1.0.1", "desc": "Vue 2 组件与交互测试编写规范", "updatedAt": "2026-09-15 00:00:00" },
+    "testing-vue3": { "version": "1.0.1", "desc": "Vue 3 组件与交互测试编写规范", "updatedAt": "2026-09-15 00:00:00" },
+    "typescript": {
+      "version": "1.0.1",
+      "desc": "TypeScript 类型安全、函数设计、不可变性规范",
+      "updatedAt": "2026-09-15 00:00:00"
+    },
+    "uniapp": { "version": "1.0.1", "desc": "uni-app 多端开发与平台兼容规范", "updatedAt": "2026-09-15 00:00:00" },
+    "vue2": { "version": "1.0.1", "desc": "Vue 2 组件、Options API、响应式开发规范", "updatedAt": "2026-09-15 00:00:00" },
+    "vue3": { "version": "1.0.1", "desc": "Vue 3 组件、Composition API、响应式开发规范", "updatedAt": "2026-09-15 00:00:00" }
   },
   "skills": {
-    "flow-archive": { "version": "1.0.0", "desc": "验证完成后归档迭代并提交变更", "updatedAt": "2026-09-11 06:45:00" },
-    "flow-brainstorm": { "version": "1.0.0", "desc": "通过结构化讨论收敛需求与业务决策", "updatedAt": "2026-09-11 06:45:00" },
-    "flow-bugfix": { "version": "1.0.0", "desc": "定位并修复边界明确的缺陷和小型变更", "updatedAt": "2026-09-11 06:45:00" },
-    "flow-e2e": { "version": "1.0.0", "desc": "在真实浏览器中验证完整集成场景", "updatedAt": "2026-09-11 06:45:00" },
-    "flow-implement": { "version": "1.0.0", "desc": "依据设计和任务依赖实施并验证功能", "updatedAt": "2026-09-11 06:45:00" },
-    "flow-plan-review": { "version": "1.0.0", "desc": "实现前审查设计与任务的追踪完整性", "updatedAt": "2026-09-11 06:45:00" },
-    "flow-plans": { "version": "1.0.0", "desc": "将完整需求转换为技术设计和任务拆解", "updatedAt": "2026-09-11 06:45:00" },
-    "flow-review": { "version": "1.0.0", "desc": "审查实现正确性、风险与代码质量", "updatedAt": "2026-09-11 06:45:00" }
+    "flow-archive": { "version": "2.1.0", "desc": "验证完成后归档迭代并提交变更", "updatedAt": "2026-09-15 00:00:00" },
+    "flow-brainstorm": { "version": "2.1.1", "desc": "通过结构化讨论收敛需求与业务决策", "updatedAt": "2026-09-15 00:00:00" },
+    "flow-bugfix": { "version": "2.2.1", "desc": "定位并修复缺陷、边界明确的小型变更", "updatedAt": "2026-09-15 00:00:00" },
+    "flow-e2e": { "version": "2.3.0", "desc": "在真实浏览器中验证完整集成场景", "updatedAt": "2026-09-15 00:00:00" },
+    "flow-implement": { "version": "2.2.1", "desc": "按设计和任务依赖实施并验证功能", "updatedAt": "2026-09-15 00:00:00" },
+    "flow-plan-review": {
+      "version": "2.0.0",
+      "desc": "实现前审查设计与任务的完整性与可靠性",
+      "updatedAt": "2026-09-15 00:00:00"
+    },
+    "flow-plans": { "version": "2.3.1", "desc": "将完整需求转换为技术设计和任务拆解", "updatedAt": "2026-09-15 00:00:00" },
+    "flow-review": { "version": "2.1.1", "desc": "审查实现的正确性、风险与代码质量", "updatedAt": "2026-09-15 00:00:00" }
   }
 }

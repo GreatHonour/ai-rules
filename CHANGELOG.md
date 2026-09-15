@@ -1,5 +1,15 @@
 # @icc-grow/team-cli
 
+## 1.1.0
+
+### Minor Changes
+
+- 修改 `flow-plan-review` `skill` 的逻辑
+
+### Patch Changes
+
+- 新增 `rules` 文档版本号，更新 `registry.json` 版本号
+
 ## 1.0.2
 
 ### Patch Changes

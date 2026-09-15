@@ -1,6 +1,7 @@
 ---
 trigger: model_decision
 description: 当你要编写 Vue 2 组件（.vue 文件）、使用 Options API、管理响应式数据、定义 Props、编写 computed / watch / methods 或处理 Vue2 响应式限制时，来这里查 Vue 2 语法规范和最佳实践。
+version: "1.0.1"
 ---
 
 # Vue 2 最佳实践（通用 · Vue 2.6+）

@@ -1,6 +1,7 @@
 ---
 trigger: model_decision
 description: 新增、移动或拆分文件时加载，用于判断目录归属与依赖边界。
+version: "1.0.1"
 ---
 
 # 项目文件目录规范
