@@ -3,7 +3,7 @@ name: flow-implement
 description: "按 design.md 和 task.md 的依赖顺序实现未完成任务。前置条件：必须存在 design.md 和 task.md。如果没有设计文档 - 先调用 plans；如果需求不明确 - 先调用 brainstorm。完成测试与质量检查后更新任务状态"
 metadata:
   author: icc-grow
-  version: "2.2.1"
+  version: "2.2.2"
 ---
 
 # 任务实现 (Implement)
@@ -21,6 +21,7 @@ metadata:
 3. **使用项目工具**：仅限页面级的测试、类型检查、lint 使用项目已有命令，只执行适用项。
 4. **需求变更处理**：需要改变业务行为、边界或方案时停止并报告。实现级修正同步到 `design.md`；任务边界变化同步到 `task.md`。
 5. **规范约定**：规则文件已覆盖相关约定，禁止再读示例组件确认，如有不清晰请询问用户。
+6. **实现过程中不要过度防御**
 
 ---
 
