@@ -1,0 +1,44 @@
+[
+  {
+    "task_id": "T1",
+    "task_name": "初始化本轮任务 JSON",
+    "test_content": "读取当前 task.md，整理完整任务数组并通过 init 在来源目录生成 e2e-task.json；文件已存在、任务为空或 ID 重复时必须拒绝写入。",
+    "depends": [],
+    "status": "passed",
+    "description": "",
+    "evidence": []
+  },
+  {
+    "task_id": "T2",
+    "task_name": "按 ID 读取和更新任务",
+    "test_content": "按 task_id 读取单项任务，确认返回验收内容和未通过的 depends 依赖；更新只改变指定任务，未知 ID、非法状态或空失败说明必须拒绝写入。",
+    "depends": [
+      "T1"
+    ],
+    "status": "passed",
+    "description": "",
+    "evidence": []
+  },
+  {
+    "task_id": "T3",
+    "task_name": "校验完成情况并生成失败报告",
+    "test_content": "存在 pending 时 check 返回未完成且不生成最终报告；没有 pending 时汇总同目录任务文件；全部通过时报告明确无失败，CLI 区分成功、失败和未完成退出码。",
+    "depends": [
+      "T2"
+    ],
+    "status": "passed",
+    "description": "",
+    "evidence": []
+  },
+  {
+    "task_id": "T4",
+    "task_name": "接入精简技能流程",
+    "test_content": "核对 JSON 模板、技能说明、命令入口、环境工具映射和工具不可用时等待用户确认的规则。",
+    "depends": [
+      "T3"
+    ],
+    "status": "passed",
+    "description": "",
+    "evidence": []
+  }
+]

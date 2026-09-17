@@ -1,0 +1,11 @@
+[
+  {
+    "task_id": "T1",
+    "task_name": "[任务名]",
+    "test_content": "[入口、操作与验收条件，包含预期结果]",
+    "depends": [],
+    "status": "pending",
+    "description": "",
+    "evidence": []
+  }
+]

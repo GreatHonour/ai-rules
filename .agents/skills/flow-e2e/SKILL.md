@@ -1,103 +1,65 @@
 ---
 name: flow-e2e
-description: "在真实浏览器中验证集成场景，记录证据、处理失败并更新验证状态。前置条件：必须存在 task.md 的集成验证任务或 fix.md 的验证场景。如果没有验证任务 - 询问用户是否需要。适用于：跨组件交互、完整用户流程、浏览器特定行为"
+description: '对 task.md 或 *-fix.md 中已定义的验收场景执行集成与 E2E 验证，使用状态 JSON 按依赖逐项记录结果，并生成失败或阻塞报告。用于功能完成后的浏览器、H5、桌面或移动端验收及修复复测；没有明确验证清单时不要使用。'
 metadata:
   author: icc-grow
-  version: "2.3.0"
+  version: '2.6.1'
 ---
 
 # E2E 验证
 
-在真实运行环境中验证既定用户场景。只负责集成验证任务，不修改普通功能任务的状态。
+读取当前迭代的 `task.md` 或对应 `*-fix.md`，以文档中的预期为准逐项验证。默认只记录结果，不修改业务代码或来源任务状态。
 
-**执行流程**： 确定范围 → 选择工具 → 能力预检 → 执行验证 → 处理失败 → 输出报告 → 流转操作
-
----
-
-## 确定范围
-
-**验证对象**：`task.md`「集成验证」中的每个 Txx 或 `*-fix.md` 中的「验证场景」
-
-**约束**：
-- 不得自行扩展验证范围
-- 每个验证对象可包含一个或多个场景
-- `*-fix.md` 的场景没有对应 Txx，不修改 `task.md`
-- 预期行为从任务文档和设计文档获取，不从 git 历史推测
+**执行流程**：读取验收清单 -> 初始化或恢复状态 -> 按依赖选择任务 -> 选择工具并执行验证 -> 更新任务状态 -> 汇总检查并生成报告。
 
 
-## 工具选择与能力预检
+## 状态文件
 
-优先使用 `chrome:control-chrome` 能力不足时先说明缺口，未经同意不得切换。
+按 [JSON 模板](assets/e2e-task.json)整理验收场景；脚本不解析 Markdown。JSON 全程使用 `depends`，使用 `evidence` 数组保存证据地址：`task.md` 沿用原任务 ID，无编号的修复场景按顺序使用 `F1、F2…`。
 
-未指定时按顺序选择首个可用 Adapter：
+- `task.md` -> `e2e-task.json`
+- `<name>-fix.md` -> `<name>-e2e-task-fix.json`
+- 状态文件已存在时继续原进度，不重新初始化。
 
-1. `chrome:control-chrome` → [adapters/control-chrome.md](adapters/control-chrome.md)
-2. `Chrome DevTools MCP` → [adapters/chrome-devtools-mcp.md](adapters/chrome-devtools-mcp.md)
-3. `browser-use MCP` → [adapters/browser-use-mcp.md](adapters/browser-use-mcp.md)
-4. `Playwright` → [adapters/playwright.md](adapters/playwright.md)
+脚本入口为 `<skill目录>/scripts/e2eTasks.mjs`：
 
-超出该列表的工具需先获得用户授权。
+```text
+<任务数组 JSON> | pnpm exec node <脚本> init <来源.md>
+pnpm exec node <脚本> get <任务.json> <task_id>
+pnpm exec node <脚本> update <任务.json> <task_id> <status> [说明] [--evidence 证据路径]... [--log 日志路径]
+pnpm exec node <脚本> check <迭代目录>
+```
 
-### 执行前检查
+## 执行
 
-1. 确认 dev server、目标 URL 和页面身份。
-2. 读取所选 Adapter。
-3. 列出每个场景需要的能力和证据，如 viewport、触摸、DOM、URL、控制台日志。
-4. 一次性检查 Adapter 是否满足全部场景；不满足则切换默认 Adapter，或将用户指定工具的缺口标记为「需人工介入」。
+1. 没有状态文件时整理完整验收场景，通过标准输入调用 `init`。
+2. 新建后保留已提交的任务数组及 `init` 返回的 `task_file/task_ids` 作为执行队列，不再读取整个状态 JSON。恢复执行时从来源文档重建稳定的 ID 队列，对每个 ID 调用一次 `get` 建立状态快照；每次 `update` 后同步更新内存状态，已完成任务不重跑。
+3. 根据内存中的状态处理依赖：依赖为 `pending` 时暂缓；依赖为 `failed/blocked` 时直接将当前项更新为 `blocked`，不执行测试。
+4. 逐项覆盖可执行任务的全部验收条件；同一次测试能覆盖多个任务时只运行一次并复用证据，避免按 `task_id` 重复执行。
+5. 用可见结果、URL、DOM、日志、截图或录屏证明结果；命令成功本身不是验收证据。只有任务拥有可复查的专属文件时，才将其生成在来源文档同目录的 `evidence/`；日志默认命名为 `<task_name>.log`，非法文件名字符替换为 `_`，同名冲突时追加 `task_id`。迭代级测试输出在报告或修复说明中记录一次，不复制为每个任务的证据。需要真机能力的场景不能用普通浏览器代替。
+6. 任务得到终态后调用一次 `update`；有专属证据时通过 `--evidence` 记录地址，日志可用 `--log` 记录，两者最终都写入 `evidence`。本次专属证据会替换该任务的旧证据。失败或阻塞必须写明实际结果和原因，原因不明写“待定位”。`update` 只持久化结果，不代替测试。
+7. 遇到阻塞时继续执行不受影响的独立任务；没有可执行任务时调用一次 `check` 并停止。正常完成时也只在最后调用一次 `check`。
 
-## 执行规则
+## 环境与工具
 
-### 入口与交互
+| 环境 | 使用工具 |
+| --- | --- |
+| PC 网页 | 首选 `agent-browser`，不可用或能力不足时使用用户提供的 `browser-use`；桌面窗口操作使用 `computer-use` |
+| 普通 H5 | 同 PC 网页，并确认移动视口；真实设备行为使用 `mobile-mcp` |
+| 微信开发者工具 | 使用 `computer-use` 操作开发者工具 |
+| 手机浏览器、手机微信 | 使用 `mobile-mcp` 连接真机或模拟器 |
+| 视觉复刻或对比 | `screenshot-to-code-agent` 仅作辅助，不代替浏览器或设备控制 |
 
-- 从 Demo 或任务指定的用户入口开始；仅场景标注 `[公开 API]` 时验证服务语义
-- 交互前读取最新页面状态并确认目标唯一，离屏元素先滚动到可见区域
-- 交互后等待页面状态不再变化（DOM 无更新且网络请求完成），再以可见文本、DOM、URL 或控制台日志记录证据；
-- 命令成功不能单独作为证据
+### 工具来源
+- [`browser-use`](https://www.skills.sh/browser-use/browser-use/browser-use)、
+- [`mobile-mcp`](https://github.com/mobile-next/mobile-mcp)、
+- [`screenshot-to-code-agent`](https://github.com/hxx2001/screenshot_to_code_agent-skill)。
+- 实际调用以已安装 skill 或 MCP 的当前说明为准。
 
-### 特殊场景
+用户指定上述工具时优先使用。只有这些工具均不可用或能力不足时，才说明缺口并建议其他合适工具；暂停执行，等待用户确认后再切换或安装。
 
-- 移动端场景设置明确 viewport，并读取 `innerWidth`、`innerHeight` 确认生效
-- 检查页面控制台 error；出现错误时记录 URL、页面状态和日志
 
-### 失败保护
-
-**执行失败超过 3 次，必须停止执行**，并通知用户
-
----
-
-## 失败、修复与复测
-
-**失败后处理**：
-- 失败后先定位原因，能够确定失败原因且修复方案确定时可就地修改代码。
-- 修改后运行受影响测试和项目适用检查，再重跑受影响场景。
-- 修改可能影响已通过场景时，同时重跑这些场景。
-- 在报告中记录 E2E 阶段的全部代码修改。
-
-**无法确定原因时**：
-- 停止对应场景并标记「需人工介入」
-- 不做无依据重试
-
----
-
-## 输出报告
-
-**文件路径：** `.docs/[文件名]/[YYYY-MM-DD]/e2e-report.md`
-
-**必须包含：**
-- 使用工具及切换原因
-- 每个场景的来源、结果和证据
-- E2E 阶段修改记录（如有）
-- 未解决问题和人工介入项（如有）
-
-### 清理与检查
-
-按 Adapter 指引重置 viewport、关闭页面并删除临时脚本。
-
-检查 `git status`；若工具异步写回临时文件，继续清理并复查，直到没有本次 E2E 产生的残留。
-
----
-
-## 流转操作
-
-- 所有验证对象均已完成 → 调用 `/flow-archive`
-- 存在未完成验证 → 停止并保留未完成状态，告知用户修复后重新调用 `/flow-e2e` 重跑失败场景，或确认跳过后调用 `/flow-archive`
+## 状态
+- 状态仅限 `pending / passed / failed / blocked`。
+- 退出码：`0` 全部通过；`1` 存在失败、阻塞或命令错误；`2` 仍有待执行任务。
+- 报告格式见 [报告模板](assets/e2e-report-template.md)。
