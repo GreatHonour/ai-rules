@@ -1,5 +1,13 @@
 ## 功能：team-cli
 
+### 2026-09-17 release 版本同步校验
+
+- 能力或变更：`release` 更新 registry 时保留顶层 `repositoryUrl`，并校验 rule front matter `version`、skill `metadata.version` 与目标版本一致。
+- 关键逻辑：已有资源按维护者选择的 SemVer 升级计算目标版本，新资源目标版本固定为 `1.0.0`；源版本不一致时在写入 registry 前失败。
+- 结构决策：不自动修改源文件，要求维护者先同步版本号，避免 release 静默改写资源内容。
+- 影响面：公共源仓库 `pnpm agents release` 发布流程及其回归测试。
+- 遗留：`pnpm test` 仍会收集已有的 `.agents/skills/flow-e2e/scripts/e2eTasks.spec.mjs` 并因无 Vitest 测试套件失败；本次 release 测试、构建、类型和格式检查均通过。
+
 ### 2026-09-14 Windows `.agents` 占用兼容
 
 - 能力或变更：`init`、`config`、`update` 在项目根目录创建带 UTC 时间戳的 `.agents` 备份后，原地同步受管资源；成功时提示用户手动删除备份目录。

@@ -49,6 +49,8 @@ pnpm agents release
 
 命令相对 `HEAD` 归并变化；已有资源逐项选择 `patch`、`minor` 或 `major`，新资源固定为 `1.0.0`，删除资源会移除对应 registry 条目。命令只更新 `registry.json` 并输出摘要，不执行 `git add`、`git commit` 或 `git push`。
 
+release 写入 registry 前会校验源文件版本：rule 的 front matter `version`、skill 的 `metadata.version` 必须与本次目标版本一致；不一致时拒绝写入并提示先同步修改源文件。
+
 精确暂存资源和 registry 后，可执行只读门禁：
 
 ```bash

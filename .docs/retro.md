@@ -1,3 +1,11 @@
+## 2026-09-17 team-cli
+
+### 流程 release registry 与源文件版本同步
+
+  - 依据：`src/commands/__tests__/release.spec.ts` 5/5 通过，覆盖 rule 成功发布、版本不一致拒绝和 skill `metadata.version` 校验。
+  - 原因：release 原先只根据 registry 版本生成新版本，没有验证源文件自身的版本声明。
+  - 改进：发布命令在写入 registry 前读取并校验源文件版本；不一致时失败且保持 registry 不变，版本同步责任保持在维护者侧。
+
 ## 2026-09-17 flow-e2e
 
 ### 流程 证据字段替换

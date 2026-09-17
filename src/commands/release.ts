@@ -8,7 +8,7 @@ import { validateRegistry } from '../registry/registry-client.js';
 import { detectWorkingResourceChanges } from '../release/change-detector.js';
 import { bumpResourceVersion } from '../release/registry-editor.js';
 import { runGit } from '../git/git-command.js';
-import { formatUtcDate, requireString } from '../validation.js';
+import { formatUtcDate, requireSemVer, requireString } from '../validation.js';
 
 export interface ReleaseDependencies {
   readonly detectChanges: (workspacePath: string) => Promise<readonly ChangedResource[]>;
@@ -68,6 +68,51 @@ async function assertPublicSourceRepository(workspacePath: string): Promise<void
   await access(join(workspacePath, '.agents', 'skills'));
 }
 
+/** 从 rule 或 skill 的 front matter 读取源文件版本。 */
+function parseSourceVersion(content: string, resource: ChangedResource, documentPath: string): string {
+  const lines = content.split(/\r?\n/);
+  if (lines[0] !== '---') {
+    throw new Error(`${documentPath} 缺少 front matter，无法校验版本号`);
+  }
+  let inMetadata = false;
+  for (const line of lines.slice(1)) {
+    if (line === '---') {
+      break;
+    }
+    if (resource.kind === 'skills') {
+      if (/^metadata:\s*$/.test(line)) {
+        inMetadata = true;
+        continue;
+      }
+      if (/^\S/.test(line)) {
+        inMetadata = false;
+      }
+    }
+    const versionMatch = /^\s*version:\s*["']?([^"'\s]+)["']?\s*$/.exec(line);
+    const isVersionField = resource.kind === 'rules' ? /^version:/.test(line) : inMetadata;
+    if (isVersionField && versionMatch?.[1] !== undefined) {
+      return requireSemVer(versionMatch[1], `${resource.kind}.${resource.name}.sourceVersion`);
+    }
+  }
+  throw new Error(`${documentPath} 缺少版本号，无法与 registry 同步`);
+}
+
+/** 读取资源源文件版本并用于 release 一致性校验。 */
+async function readSourceVersion(workspacePath: string, resource: ChangedResource): Promise<string> {
+  const documentPath =
+    resource.kind === 'rules'
+      ? join(workspacePath, '.agents', 'rules', `${resource.name}.md`)
+      : join(workspacePath, '.agents', 'skills', resource.name, 'SKILL.md');
+  let content: string;
+  try {
+    content = await readFile(documentPath, 'utf8');
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error(`无法读取 ${documentPath} 版本号: ${message}`);
+  }
+  return parseSourceVersion(content, resource, documentPath);
+}
+
 /** 根据工作树资源变化生成 registry 版本更新，不执行 Git 写操作。 */
 export async function releaseRegistry(
   workspacePath: string,
@@ -90,20 +135,32 @@ export async function releaseRegistry(
       releasedResources.push(currentEntry === undefined ? resource : { ...resource, previousVersion: currentEntry.version });
       continue;
     }
+    const nextVersion =
+      currentEntry === undefined
+        ? '1.0.0'
+        : bumpResourceVersion(currentEntry.version, await dependencies.selectReleaseType(resource));
+    const sourceVersion = await readSourceVersion(workspacePath, resource);
+    if (sourceVersion !== nextVersion) {
+      throw new Error(
+        `${resource.kind}.${resource.name}.version 源文件为 ${sourceVersion}，release 目标为 ${nextVersion}，请同步修改源文件版本号`
+      );
+    }
     if (currentEntry === undefined) {
       resourceMap[resource.name] = {
-        version: '1.0.0',
+        version: nextVersion,
         desc: requireString(await dependencies.describeResource(resource), `${resource.kind}.${resource.name}.desc`),
         updatedAt: formatUtcDate(dependencies.now()),
       };
-      releasedResources.push({ ...resource, nextVersion: '1.0.0' });
+      releasedResources.push({ ...resource, nextVersion });
       continue;
     }
-    const releaseType = await dependencies.selectReleaseType(resource);
-    const nextVersion = bumpResourceVersion(currentEntry.version, releaseType);
     resourceMap[resource.name] = { ...currentEntry, version: nextVersion, updatedAt: formatUtcDate(dependencies.now()) };
     releasedResources.push({ ...resource, previousVersion: currentEntry.version, nextVersion });
   }
-  await writeJsonAtomic(join(workspacePath, 'registry.json'), { rules: mutableRules, skills: mutableSkills });
+  await writeJsonAtomic(join(workspacePath, 'registry.json'), {
+    repositoryUrl: registry.repositoryUrl,
+    rules: mutableRules,
+    skills: mutableSkills,
+  });
   return releasedResources;
 }

@@ -18,7 +18,7 @@ async function createRepository(): Promise<string> {
   temporaryDirectories.push(workspacePath);
   await mkdir(join(workspacePath, '.agents', 'rules'), { recursive: true });
   await mkdir(join(workspacePath, '.agents', 'skills'), { recursive: true });
-  await writeFile(join(workspacePath, '.agents', 'rules', 'typescript.md'), 'base', 'utf8');
+  await writeFile(join(workspacePath, '.agents', 'rules', 'typescript.md'), '---\nversion: "1.0.0"\n---\nbase', 'utf8');
   await writeFile(
     join(workspacePath, 'registry.json'),
     JSON.stringify({
@@ -52,7 +52,7 @@ afterEach(async () => {
 describe('releaseRegistry', () => {
   it('逐项升级并且不自动暂存', async () => {
     const workspacePath = await createRepository();
-    await writeFile(join(workspacePath, '.agents', 'rules', 'typescript.md'), 'changed', 'utf8');
+    await writeFile(join(workspacePath, '.agents', 'rules', 'typescript.md'), '---\nversion: "1.1.0"\n---\nchanged', 'utf8');
 
     const released = await releaseRegistry(workspacePath, {
       detectChanges: detectWorkingResourceChanges,
@@ -64,6 +64,8 @@ describe('releaseRegistry', () => {
     expect(released[0]?.nextVersion).toBe('1.1.0');
     const registryText = await readFile(join(workspacePath, 'registry.json'), 'utf8');
     expect(registryText).toContain('"version": "1.1.0"');
+    const registryValue = JSON.parse(registryText) as { repositoryUrl?: unknown };
+    expect(registryValue.repositoryUrl).toBe('https://example.com/repo.git');
     expect((await executeFile('git', ['diff', '--cached', '--name-only'], { cwd: workspacePath })).stdout).toBe('');
   });
 
@@ -81,9 +83,27 @@ describe('releaseRegistry', () => {
     await expect(releaseRegistry(workspacePath)).rejects.toThrow();
   });
 
+  it('源文件版本未同步时拒绝写入 registry', async () => {
+    const workspacePath = await createRepository();
+    await writeFile(join(workspacePath, '.agents', 'rules', 'typescript.md'), '---\nversion: "1.0.0"\n---\nchanged', 'utf8');
+
+    await expect(
+      releaseRegistry(workspacePath, {
+        detectChanges: detectWorkingResourceChanges,
+        selectReleaseType: async () => 'minor',
+        describeResource: async () => '新资源',
+        now: () => new Date('2026-09-11T08:00:00.000Z'),
+      })
+    ).rejects.toThrow('源文件为 1.0.0，release 目标为 1.1.0');
+    const registryValue = JSON.parse(await readFile(join(workspacePath, 'registry.json'), 'utf8')) as {
+      rules?: { typescript?: { version?: string } };
+    };
+    expect(registryValue.rules?.typescript?.version).toBe('1.0.0');
+  });
+
   it('新增资源时写入说明和固定初始版本', async () => {
     const workspacePath = await createRepository();
-    await writeFile(join(workspacePath, '.agents', 'rules', 'naming.md'), 'new', 'utf8');
+    await writeFile(join(workspacePath, '.agents', 'rules', 'naming.md'), '---\nversion: "1.0.0"\n---\nnew', 'utf8');
 
     await releaseRegistry(workspacePath, {
       detectChanges: detectWorkingResourceChanges,
@@ -96,5 +116,27 @@ describe('releaseRegistry', () => {
     expect(registryText).toContain('"version": "1.0.0"');
     expect(registryText).toContain('"desc": "命名规范"');
     expect(registryText).toContain('"updatedAt": "2026-09-11 10:11:12"');
+  });
+
+  it('新增 skill 时校验 metadata.version', async () => {
+    const workspacePath = await createRepository();
+    await mkdir(join(workspacePath, '.agents', 'skills', 'flow-new'), { recursive: true });
+    await writeFile(
+      join(workspacePath, '.agents', 'skills', 'flow-new', 'SKILL.md'),
+      '---\nname: flow-new\nmetadata:\n  version: "1.0.0"\n---\nnew',
+      'utf8'
+    );
+
+    await releaseRegistry(workspacePath, {
+      detectChanges: detectWorkingResourceChanges,
+      selectReleaseType: async () => 'minor',
+      describeResource: async () => '新 skill',
+      now: () => new Date('2026-09-11T10:11:12.000Z'),
+    });
+
+    const registryValue = JSON.parse(await readFile(join(workspacePath, 'registry.json'), 'utf8')) as {
+      skills?: { 'flow-new'?: { version?: string } };
+    };
+    expect(registryValue.skills?.['flow-new']?.version).toBe('1.0.0');
   });
 });
