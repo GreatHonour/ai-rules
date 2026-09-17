@@ -3,7 +3,7 @@ name: flow-implement
 description: "按 design.md 和 task.md 的依赖顺序实现未完成任务。前置条件：必须存在 design.md 和 task.md。如果没有设计文档 - 先调用 plans；如果需求不明确 - 先调用 brainstorm。完成测试与质量检查后更新任务状态"
 metadata:
   author: icc-grow
-  version: "2.2.2"
+  version: "2.2.3"
 ---
 
 # 任务实现 (Implement)
@@ -75,3 +75,6 @@ metadata:
 **禁止**：删除测试、降低断言、跳过检查
 
 
+## 流转操作
+
+任务完成之后直接调用 `/flow-review`；
