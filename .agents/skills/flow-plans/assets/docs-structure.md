@@ -24,8 +24,8 @@
     task.md                       ← 任务拆分（plans Phase 2；允许本迭代内同步实现级修正）
     review.md                     ← 仅由 review 阶段创建的审查过程草稿（archive 仅清理已有文件）
     e2e-report.md                 ← E2E 验证报告（archive 保留）
-    [问题简述]-fix.md              ← bug 修复记录（长期保留：根因/复现/方案，log.md 链回）
-retro.md                          ← 代码、流程和工具经验候选，由用户自行处理
+    [问题简述]-fix.md              ← 修复记录（归档时按 flow-archive 合并或保留）
+retro.md                          ← 项目踩坑、执行改进、业务查漏
 ```
 
 

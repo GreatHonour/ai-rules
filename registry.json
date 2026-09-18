@@ -69,9 +69,9 @@
   },
   "skills": {
     "flow-archive": {
-      "version": "2.1.0",
+      "version": "2.1.4",
       "desc": "验证完成后归档迭代并提交变更",
-      "updatedAt": "2026-09-15 00:00:01"
+      "updatedAt": "2026-09-18 00:00:01"
     },
     "flow-brainstorm": {
       "version": "2.1.1",
@@ -99,9 +99,9 @@
       "updatedAt": "2026-09-15 00:00:01"
     },
     "flow-plans": {
-      "version": "2.3.2",
+      "version": "2.3.3",
       "desc": "将完整需求转换为技术设计和任务拆解",
-      "updatedAt": "2026-09-17 10:55:30"
+      "updatedAt": "2026-09-18 00:00:01"
     },
     "flow-review": {
       "version": "2.1.1",

@@ -3,7 +3,7 @@ name: flow-plans
 description: "用于业务决策已完成且需要技术设计 + 任务拆解时。前置条件：范围已定义、规则已确认、边界已设定。将决策摘要或完整需求转换为 design.md 和 task.md。如果决策不完整 - 先回到 flow-brainstorm。Use when business decisions are COMPLETE and you need technical design + task breakdown. Prerequisites: scope defined, rules confirmed, boundaries set. Converts decision summary or complete requirements into design.md and task.md. DO NOT use if decisions incomplete - return to flow-brainstorm."
 metadata:
   author: icc-grow
-  version: "2.3.2"
+  version: "2.3.3"
 ---
 
 # 规划 (Plans)
